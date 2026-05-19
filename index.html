@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض - النسخة السريعة الشاملة</title>
+    <title>شات نبض - النسخة الاحترافية المحدثة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
-        :root { --primary: #075e54; --primary-dark: #054d44; --light-green: #e1ffc7; --bg-chat: #efe7dd; }
+        :root { --primary: #075e54; --primary-dark: #054d44; --light-green: #e1ffc7; --bg-chat: #efe7dd; --whatsapp-green: #1fa855; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         
         body { 
@@ -78,7 +78,6 @@
         .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.12); border-radius: 15px; padding: 4px 8px; display: flex; align-items: center; height: 28px; }
         .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: marquee 22s linear infinite; font-size: 12px; color: #fff; }
 
-        /* صندوق الرسائل المسرع المستقر ومقاوم للاهتزاز */
         .messages { 
             flex: 1; 
             overflow-y: auto; 
@@ -89,373 +88,22 @@
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
             background-attachment: fixed;
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
         }
         
         .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; }
         .msg-wrapper.me { align-self: flex-start; flex-direction: row; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
         
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
         
         .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 140px; position: relative; word-break: break-word; }
         .msg-wrapper.me .bubble { background-color: var(--light-green); border-top-left-radius: 0; }
         .msg-wrapper.other .bubble { background-color: #fff; border-top-right-radius: 0; }
         
         .sender-name { font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
-        .msg-wrapper.other .sender-name { color: #34b7f1; }
         
         .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid #0084ff; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; font-size: 12px; color: #555; }
         .reply-quote-sender { font-weight: bold; font-size: 10px; color: #0084ff; display: block; }
 
         .media-content img { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; object-fit: cover; }
-        .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 160px; background: #000; }
-        
-        /* شريط البصمة الصوتية المحترف والمدمج (للملفات وللتسجيل الحي) */
-        .audio-bubble-container { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.06); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 180px; }
-        .audio-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .audio-wave-line { flex: 1; height: 3px; background: rgba(0,0,0,0.15); position: relative; border-radius: 2px; }
-        .audio-title-tag { font-size: 10px; color: #555; white-space: nowrap; }
-
-        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: 6px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 2px; }
-        .reactions { display: flex; gap: 4px; }
-        .react-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #666; display: flex; align-items: center; gap: 2px; }
-        .msg-time { font-size: 9px; color: #727272; white-space: nowrap; }
-        .reply-trigger-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #0084ff; }
-
-        .reply-preview-box { background: #e2e8f0; padding: 6px 12px; display: none; align-items: center; justify-content: space-between; border-right: 4px solid #0084ff; font-size: 12px; min-height: 35px; }
-
-        /* منطقة الإدخال السفلية المستقرة */
-        .input-area { 
-            background-color: #f0f2f5; 
-            padding: 6px 10px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            border-top: 1px solid #e1e1e1;
-            height: 52px;
-            min-height: 52px;
-            width: 100%;
-        }
-        .input-box { flex: 1; border: none; padding: 8px 14px; border-radius: 20px; outline: none; font-size: 14px; background-color: #fff; height: 36px; }
-        
-        .action-btn { background: #fff; border: 1px solid #e1e1e1; cursor: pointer; font-size: 16px; color: #54656f; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-        .action-btn:hover { background: #f0f2f5; color: var(--primary); }
-        .mic-active { background: #d32f2f !important; color: white !important; animation: pulse 1.2s infinite; }
-
-        .send-btn { background-color: #0084ff; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .send-svg { width: 16px; height: 16px; fill: white; transform: rotate(180deg); }
-        
-        #file-loader { display: none; }
-        
-        @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
-    </style>
-</head>
-<body>
-
-    <div id="profile-screen" style="display: none;">
-        <div class="profile-card">
-            <h2>مرحباً بك في شات نبض ✨</h2>
-            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">اختر صورتك التعبيرية واكتب اسمك للانضمام</p>
-            <div class="avatar-picker" id="avatar-picker-list"></div>
-            <input type="text" class="profile-input" id="profile-name-input" placeholder="اكتب اسمك هنا...">
-            <button class="profile-btn" id="save-profile-btn">دخول الشات</button>
-        </div>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">غرف شات نبض 💬</div>
-        <div class="rooms-list">
-            <div class="room-item active" data-room="room1">🌹 الديوان العام</div>
-            <div class="room-item" data-room="room2">🔥 غرفة الشباب</div>
-            <div class="room-item" data-room="room3">💡 ثقافة وأدب</div>
-            <div class="room-item" data-room="room4">⚽ الرياضة والكرة</div>
-            <div class="room-item" data-room="room5">🛠️ الدعم والمساعدة</div>
-            <div class="room-item" data-room="room6">🎉 غرفة الترفيه</div>
-        </div>
-    </div>
-
-    <div class="main-chat">
-        <div class="header">
-            <button class="menu-toggle" id="menu-btn">☰</button>
-            <span id="current-room-title">🌹 الديوان العام</span>
-            <div class="ticker-wrap">
-                <div class="ticker">
-                    🔥 شـــْـۛٱﺈت نـــْـۛبض ٱڵعرب يـــْـۛرحب بــْـۛڪم ويتمني لكم قضاء وقت ممتع 🎉 مع تحيات إدارة الشات 🎖️ التصميم برعاية "فـــْـۛٱﺈقد.ٱڵذٱڪرهٖ" ✨
-                </div>
-            </div>
-        </div>
-
-        <div class="reply-preview-box" id="reply-preview">
-            <div>
-                <span style="font-size: 10px; color:#0084ff; display:block;" id="reply-preview-user"></span>
-                <span id="reply-preview-text" style="color:#333; font-size:12px;"></span>
-            </div>
-            <button style="background:none; border:none; color:red; font-weight:bold; cursor:pointer; padding:5px;" id="cancel-reply-btn">✕</button>
-        </div>
-
-        <div class="messages" id="chat-messages"></div>
-
-        <div class="input-area">
-            <input type="file" id="file-loader" accept="image/*,video/*,audio/*">
-            <button class="action-btn" id="attach-btn" title="إرسال وسائط (صور، فيديو، صوت)">📎</button>
-            <button class="action-btn" id="mic-btn" title="تسجيل بصمة حية">🎙️</button>
-            
-            <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
-            <button class="send-btn" id="send-btn">
-                <svg class="send-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-            </button>
-        </div>
-    </div>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyDE_X_H_88wzE_N6n_Yh155364355450",
-        authDomain: "chat1986-552fe.firebaseapp.com",
-        projectId: "chat1986-552fe",
-        storageBucket: "chat1986-552fe.appspot.com",
-        messagingSenderId: "155364355450",
-        appId: "1:155364355450:web:8e3dfb52f9b17bbd"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    let currentRoom = "room1";
-    let unsubscribe = null;
-    let selectedReplyId = null;
-    let selectedReplyText = "";
-    let selectedReplySender = "";
-    let lastScrollHeight = 0;
-    
-    let mediaRecorder;
-    let audioChunks = [];
-    let isRecording = false;
-
-    const avatars = [
-        "https://api.dicebear.com/7.x/bottts/svg?seed=Ahmad",
-        "https://api.dicebear.com/7.x/avataaars/svg?seed=Faris",
-        "https://api.dicebear.com/7.x/pixel-art/svg?seed=com",
-        "https://api.dicebear.com/7.x/adventurer/svg?seed=user1"
-    ];
-
-    let username = localStorage.getItem('chat_user_name');
-    let userAvatar = localStorage.getItem('chat_user_avatar') || avatars[0];
-
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('menu-btn');
-    const chatMessages = document.getElementById('chat-messages');
-    const messageInput = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send-btn');
-    const fileLoader = document.getElementById('file-loader');
-    const attachBtn = document.getElementById('attach-btn');
-    const micBtn = document.getElementById('mic-btn');
-    const replyPreview = document.getElementById('reply-preview');
-
-    menuBtn.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
-    document.addEventListener('click', (e) => { if (!sidebar.contains(e.target) && e.target !== menuBtn) sidebar.classList.remove('open'); });
-
-    if(!username) {
-        document.getElementById('profile-screen').style.display = "flex";
-        avatars.forEach((av, i) => {
-            const img = document.createElement('img');
-            img.src = av;
-            img.className = `avatar-option ${i===0?'selected':''}`;
-            img.onclick = () => {
-                document.querySelectorAll('.avatar-option').forEach(el=>el.classList.remove('selected'));
-                img.classList.add('selected');
-                userAvatar = av;
-            };
-            document.getElementById('avatar-picker-list').appendChild(img);
-        });
-    } else {
-        loadRoomMessages(currentRoom);
-    }
-
-    document.getElementById('save-profile-btn').addEventListener('click', () => {
-        const nameInput = document.getElementById('profile-name-input').value.trim();
-        if(!nameInput) return alert("الرجاء كتابة اسمك!");
-        username = nameInput;
-        localStorage.setItem('chat_user_name', username);
-        localStorage.setItem('chat_user_avatar', userAvatar);
-        document.getElementById('profile-screen').style.display = "none";
-        loadRoomMessages(currentRoom);
-    });
-
-    // جلب الرسايل بسرعة وسلاسة (أحدث 30 رسالة لمنع البطء والاهتزاز)
-    function loadRoomMessages(roomId) {
-        if(unsubscribe) unsubscribe();
-        chatMessages.innerHTML = "";
-        
-        unsubscribe = db.collection("rooms").doc(roomId).collection("messages")
-        .orderBy("timestamp", "asc").limit(30)
-        .onSnapshot((snapshot) => {
-            chatMessages.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const msgId = doc.id;
-                if(!data.sender) return;
-                
-                const isMe = data.sender === username;
-                const wrapper = document.createElement('div');
-                wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
-                
-                const avatarImg = document.createElement('img');
-                avatarImg.className = "user-avatar";
-                avatarImg.src = data.avatarUrl || avatars[0];
-                
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.className = "sender-name";
-                nameSpan.innerText = data.sender;
-                bubble.appendChild(nameSpan);
-                
-                if(data.replyToText) {
-                    const quoteDiv = document.createElement('div');
-                    quoteDiv.className = "reply-quote";
-                    quoteDiv.innerHTML = `<span class="reply-quote-sender">@${data.replyToSender}</span>${data.replyToText}`;
-                    bubble.appendChild(quoteDiv);
-                }
-
-                if(data.text) {
-                    const textSpan = document.createElement('span');
-                    textSpan.innerText = data.text;
-                    bubble.appendChild(textSpan);
-                }
-                
-                if(data.mediaType === 'image') {
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.className = "media-content";
-                    mediaDiv.innerHTML = `<img src="${data.mediaUrl}">`;
-                    bubble.appendChild(mediaDiv);
-                } else if(data.mediaType === 'video') {
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.className = "media-content";
-                    mediaDiv.innerHTML = `<video controls preload="metadata" src="${data.mediaUrl}"></video>`;
-                    bubble.appendChild(mediaDiv);
-                } else if(data.mediaType === 'audio') {
-                    // شريط الصوت المحسن والأنيق داخل الفقاعة مباشرة
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.className = "media-content";
-                    mediaDiv.innerHTML = `
-                        <div class="audio-bubble-container">
-                            <button class="audio-play-btn" onclick="playAudio(this, '${data.mediaUrl}')">▶</button>
-                            <div class="audio-wave-line"></div>
-                            <span class="audio-title-tag">ملف صوتي 🎵</span>
-                        </div>`;
-                    bubble.appendChild(mediaDiv);
-                }
-                
-                const footer = document.createElement('div');
-                footer.className = "bubble-footer";
-                
-                const reactDiv = document.createElement('div');
-                reactDiv.className = "reactions";
-                const likes = data.likes || 0;
-                const dislikes = data.dislikes || 0;
-                reactDiv.innerHTML = `
-                    <button class="react-btn" onclick="handleReact('${msgId}', 'like')">👍 <span>${likes}</span></button>
-                    <button class="react-btn" onclick="handleReact('${msgId}', 'dislike')">👎 <span>${dislikes}</span></button>
-                `;
-                footer.appendChild(reactDiv);
-                
-                const repBtn = document.createElement('button');
-                repBtn.className = "reply-trigger-btn";
-                repBtn.innerText = "↩️ رد";
-                repBtn.onclick = () => initiateReply(msgId, data.text || "[وسائط]", data.sender);
-                footer.appendChild(repBtn);
-
-                const timeSpan = document.createElement('span');
-                timeSpan.className = "msg-time";
-                if(data.timestamp) {
-                    timeSpan.innerText = data.timestamp.toDate().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-                } else {
-                    timeSpan.innerText = "الآن";
-                }
-                footer.appendChild(timeSpan);
-                
-                bubble.appendChild(footer);
-                wrapper.appendChild(avatarImg);
-                wrapper.appendChild(bubble);
-                chatMessages.appendChild(wrapper);
-            });
-            
-            // تمرير ذكي وهادئ بدون اهتزاز الشاشة
-            if (chatMessages.scrollHeight > lastScrollHeight) {
-                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
-                lastScrollHeight = chatMessages.scrollHeight;
-            }
-        });
-    }
-
-    function initiateReply(id, text, sender) {
-        selectedReplyId = id; selectedReplyText = text; selectedReplySender = sender;
-        document.getElementById('reply-preview-user').innerText = `الرد على @${sender}`;
-        document.getElementById('reply-preview-text').innerText = text;
-        replyPreview.style.display = "flex";
-        messageInput.focus();
-    }
-
-    document.getElementById('cancel-reply-btn').addEventListener('click', () => {
-        selectedReplyId = null; replyPreview.style.display = "none";
-    });
-
-    window.handleReact = function(msgId, type) {
-        const key = `react_${msgId}`;
-        if(localStorage.getItem(key)) return;
-        const docRef = db.collection("rooms").doc(currentRoom).collection("messages").doc(msgId);
-        db.runTransaction((transaction) => {
-            return transaction.get(docRef).then((doc) => {
-                if (!doc.exists) return;
-                let currentCount = doc.data()[type === 'like' ? 'likes' : 'dislikes'] || 0;
-                transaction.update(docRef, { [type === 'like' ? 'likes' : 'dislikes']: currentCount + 1 });
-            });
-        }).then(() => { localStorage.setItem(key, type); });
-    };
-
-    document.querySelectorAll('.room-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            document.querySelectorAll('.room-item').forEach(r => r.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-            currentRoom = e.currentTarget.getAttribute('data-room');
-            document.getElementById('current-room-title').innerText = e.currentTarget.innerText;
-            sidebar.classList.remove('open');
-            loadRoomMessages(currentRoom);
-        });
-    });
-
-    window.playAudio = function(btn, src) {
-        let audio = btn.audioObj;
-        if(!audio) { audio = new Audio(src); btn.audioObj = audio; audio.onended = () => btn.innerText = "▶"; }
-        if(audio.paused) { audio.play(); btn.innerText = "⏸"; } else { audio.pause(); btn.innerText = "▶"; }
-    };
-
-    function sendMessage() {
-        const text = messageInput.value.trim();
-        if (text === '' && !selectedReplyId) return;
-        
-        const msgData = {
-            sender: username,
-            avatarUrl: userAvatar,
-            text: text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            likes: 0, dislikes: 0
-        };
-
-        if(selectedReplyId) {
-            msgData.replyToId = selectedReplyId;
-            msgData.replyToText = selectedReplyText;
-            msgData.replyToSender = selectedReplySender;
-            selectedReplyId = null;
-            replyPreview.style.display = "none";
-        }
-
-        db.collection("rooms").doc(currentRoom).collection("messages").add(msgData);
-        messageInput.value = '';
-        messageInput.focus();
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => { if
+        .media-content video { max-width: 100
