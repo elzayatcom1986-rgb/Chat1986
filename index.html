@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض - إصدار الهواتف الموحد</title>
+    <title>شات نبض - النسخة السريعة الشاملة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
@@ -19,7 +19,7 @@
             width: 100vw;
         }
         
-        /* شاشة إعداد الملف الشخصي السريعة */
+        /* شاشة الملف الشخصي */
         #profile-screen { position: fixed; inset: 0; background: var(--bg-chat); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .profile-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; max-width: 320px; text-align: center; }
         .profile-card h2 { color: var(--primary); margin-bottom: 10px; font-size: 18px; }
@@ -29,7 +29,7 @@
         .profile-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; text-align: center; font-size: 15px; margin-bottom: 12px; }
         .profile-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 20px; font-size: 15px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* القائمة الجانبية المضمونة */
+        /* القائمة الجانبية */
         .sidebar { 
             width: 240px; 
             background-color: #ffffff; 
@@ -41,7 +41,7 @@
             position: absolute;
             right: 0; top: 0; bottom: 0;
             transform: translateX(100%);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar.open { transform: translateX(0); box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
         .sidebar-header { background-color: var(--primary-dark); color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 15px; }
@@ -49,7 +49,7 @@
         .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; color: #4a4a4a; font-size: 14px; }
         .room-item.active { background-color: #f0f2f5; color: var(--primary); border-right: 4px solid var(--primary); font-weight: bold; }
 
-        /* الشاشة الرئيسية للشات ثابتة تماماً */
+        /* منطقة المحادثة الرئيسية */
         .main-chat { 
             flex: 1; 
             display: flex; 
@@ -60,7 +60,6 @@
             overflow: hidden;
         }
         
-        /* هيدر الشات */
         .header { 
             background-color: var(--primary); 
             color: white; 
@@ -79,7 +78,7 @@
         .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.12); border-radius: 15px; padding: 4px 8px; display: flex; align-items: center; height: 28px; }
         .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: marquee 22s linear infinite; font-size: 12px; color: #fff; }
 
-        /* منطقة الرسايل مع صورة الخلفية الكلاسيكية للشات */
+        /* صندوق الرسائل المسرع المستقر ومقاوم للاهتزاز */
         .messages { 
             flex: 1; 
             overflow-y: auto; 
@@ -88,15 +87,18 @@
             flex-direction: column; 
             gap: 12px; 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-attachment: fixed;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         
-        .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; animation: fadeIn 0.15s ease; }
+        .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; }
         .msg-wrapper.me { align-self: flex-start; flex-direction: row; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
         
         .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         
-        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 130px; position: relative; }
+        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 140px; position: relative; word-break: break-word; }
         .msg-wrapper.me .bubble { background-color: var(--light-green); border-top-left-radius: 0; }
         .msg-wrapper.other .bubble { background-color: #fff; border-top-right-radius: 0; }
         
@@ -106,14 +108,16 @@
         .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid #0084ff; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; font-size: 12px; color: #555; }
         .reply-quote-sender { font-weight: bold; font-size: 10px; color: #0084ff; display: block; }
 
-        .media-content img, .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; }
+        .media-content img { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; object-fit: cover; }
+        .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 160px; background: #000; }
         
-        /* 🎙️ تعديل ظهور شريط التسجيل الصوتي ليكون مدمجاً واحترافياً داخل فقاعة الشات */
-        .audio-bubble-container { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.06); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 160px; }
-        .audio-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; }
-        .audio-wave-line { flex: 1; height: 3px; background: rgba(0,0,0,0.2); position: relative; border-radius: 2px; }
-        
-        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; gap: 6px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 2px; }
+        /* شريط البصمة الصوتية المحترف والمدمج (للملفات وللتسجيل الحي) */
+        .audio-bubble-container { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.06); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 180px; }
+        .audio-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .audio-wave-line { flex: 1; height: 3px; background: rgba(0,0,0,0.15); position: relative; border-radius: 2px; }
+        .audio-title-tag { font-size: 10px; color: #555; white-space: nowrap; }
+
+        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: 6px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 2px; }
         .reactions { display: flex; gap: 4px; }
         .react-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #666; display: flex; align-items: center; gap: 2px; }
         .msg-time { font-size: 9px; color: #727272; white-space: nowrap; }
@@ -121,7 +125,7 @@
 
         .reply-preview-box { background: #e2e8f0; padding: 6px 12px; display: none; align-items: center; justify-content: space-between; border-right: 4px solid #0084ff; font-size: 12px; min-height: 35px; }
 
-        /* منطقة الإدخال السفلية الثابتة والمحسنة 100% */
+        /* منطقة الإدخال السفلية المستقرة */
         .input-area { 
             background-color: #f0f2f5; 
             padding: 6px 10px; 
@@ -135,7 +139,6 @@
         }
         .input-box { flex: 1; border: none; padding: 8px 14px; border-radius: 20px; outline: none; font-size: 14px; background-color: #fff; height: 36px; }
         
-        /* تصميم أزرار التحكم السفلي بشكل ناعم ودائري عصري */
         .action-btn { background: #fff; border: 1px solid #e1e1e1; cursor: pointer; font-size: 16px; color: #54656f; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
         .action-btn:hover { background: #f0f2f5; color: var(--primary); }
         .mic-active { background: #d32f2f !important; color: white !important; animation: pulse 1.2s infinite; }
@@ -146,7 +149,6 @@
         #file-loader { display: none; }
         
         @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
     </style>
 </head>
@@ -196,9 +198,10 @@
         <div class="messages" id="chat-messages"></div>
 
         <div class="input-area">
-            <input type="file" id="file-loader" accept="image/*,video/*">
-            <button class="action-btn" id="attach-btn" title="إرسال صورة">📷</button>
-            <button class="action-btn" id="mic-btn" title="تسجيل صوتي">🎙️</button>
+            <input type="file" id="file-loader" accept="image/*,video/*,audio/*">
+            <button class="action-btn" id="attach-btn" title="إرسال وسائط (صور، فيديو، صوت)">📎</button>
+            <button class="action-btn" id="mic-btn" title="تسجيل بصمة حية">🎙️</button>
+            
             <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
             <button class="send-btn" id="send-btn">
                 <svg class="send-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -223,6 +226,7 @@
     let selectedReplyId = null;
     let selectedReplyText = "";
     let selectedReplySender = "";
+    let lastScrollHeight = 0;
     
     let mediaRecorder;
     let audioChunks = [];
@@ -248,7 +252,6 @@
     const micBtn = document.getElementById('mic-btn');
     const replyPreview = document.getElementById('reply-preview');
 
-    // فتح وإغلاق القائمة الجانبية
     menuBtn.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
     document.addEventListener('click', (e) => { if (!sidebar.contains(e.target) && e.target !== menuBtn) sidebar.classList.remove('open'); });
 
@@ -279,13 +282,13 @@
         loadRoomMessages(currentRoom);
     });
 
-    // جلب الرسائل من فايربيس
+    // جلب الرسايل بسرعة وسلاسة (أحدث 30 رسالة لمنع البطء والاهتزاز)
     function loadRoomMessages(roomId) {
         if(unsubscribe) unsubscribe();
         chatMessages.innerHTML = "";
         
         unsubscribe = db.collection("rooms").doc(roomId).collection("messages")
-        .orderBy("timestamp", "asc").limit(60)
+        .orderBy("timestamp", "asc").limit(30)
         .onSnapshot((snapshot) => {
             chatMessages.innerHTML = "";
             snapshot.forEach((doc) => {
@@ -330,17 +333,17 @@
                 } else if(data.mediaType === 'video') {
                     const mediaDiv = document.createElement('div');
                     mediaDiv.className = "media-content";
-                    mediaDiv.innerHTML = `<video controls src="${data.mediaUrl}"></video>`;
+                    mediaDiv.innerHTML = `<video controls preload="metadata" src="${data.mediaUrl}"></video>`;
                     bubble.appendChild(mediaDiv);
                 } else if(data.mediaType === 'audio') {
-                    // 🎙️ شريط تسجيل صوتي احترافي ومدمج تماماً جوه الفقاعة كما طلبت
+                    // شريط الصوت المحسن والأنيق داخل الفقاعة مباشرة
                     const mediaDiv = document.createElement('div');
                     mediaDiv.className = "media-content";
                     mediaDiv.innerHTML = `
                         <div class="audio-bubble-container">
                             <button class="audio-play-btn" onclick="playAudio(this, '${data.mediaUrl}')">▶</button>
                             <div class="audio-wave-line"></div>
-                            <span style="font-size:10px; color:#666; white-space:nowrap;">بصمة صوتية</span>
+                            <span class="audio-title-tag">ملف صوتي 🎵</span>
                         </div>`;
                     bubble.appendChild(mediaDiv);
                 }
@@ -378,7 +381,12 @@
                 wrapper.appendChild(bubble);
                 chatMessages.appendChild(wrapper);
             });
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // تمرير ذكي وهادئ بدون اهتزاز الشاشة
+            if (chatMessages.scrollHeight > lastScrollHeight) {
+                chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+                lastScrollHeight = chatMessages.scrollHeight;
+            }
         });
     }
 
@@ -407,7 +415,6 @@
         }).then(() => { localStorage.setItem(key, type); });
     };
 
-    // ربط مدمج وآمن لتبديل الغرف
     document.querySelectorAll('.room-item').forEach(item => {
         item.addEventListener('click', (e) => {
             document.querySelectorAll('.room-item').forEach(r => r.classList.remove('active'));
@@ -451,75 +458,4 @@
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-    attachBtn.addEventListener('click', () => fileLoader.click());
-
-    fileLoader.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if(!file) return;
-        const isVideo = file.type.startsWith('video/');
-        messageInput.disabled = true;
-        messageInput.placeholder = "⏳ جاري الرفع...";
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-            db.collection("rooms").doc(currentRoom).collection("messages").add({
-                sender: username,
-                avatarUrl: userAvatar,
-                mediaUrl: reader.result,
-                mediaType: isVideo ? 'video' : 'image',
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                likes: 0, dislikes: 0
-            });
-            messageInput.disabled = false;
-            messageInput.placeholder = "اكتب رسالة...";
-        };
-        fileLoader.value = "";
-    });
-
-    // تشغيل المايك المضمون لجميع المتصفحات
-    micBtn.addEventListener('click', async () => {
-        if (!isRecording) {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                return alert("التسجيل غير مدعوم على هذا الهاتف حالياً.");
-            }
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = () => {
-                        db.collection("rooms").doc(currentRoom).collection("messages").add({
-                            sender: username,
-                            avatarUrl: userAvatar,
-                            mediaUrl: reader.result,
-                            mediaType: 'audio',
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            likes: 0, dislikes: 0
-                        });
-                    };
-                };
-                
-                mediaRecorder.start();
-                isRecording = true;
-                micBtn.classList.add('mic-active');
-                messageInput.placeholder = "🎙️ جاري تسجيل صوتك الآن...";
-            } catch (err) {
-                alert("برجاء تفعيل صلاحية المايك من إعدادات الهاتف للتطبيق!");
-            }
-        } else {
-            mediaRecorder.stop();
-            isRecording = false;
-            micBtn.classList.remove('mic-active');
-            messageInput.placeholder = "اكتب رسالة...";
-        }
-    });
-</script>
-</body>
-</html>
+    messageInput.addEventListener('keypress', (e) => { if
