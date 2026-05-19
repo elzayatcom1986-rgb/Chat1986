@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض - النسخة الاحترافية المحدثة</title>
+    <title>شات نبض - النسخة المستقرة المصفاة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
@@ -19,13 +19,10 @@
             width: 100vw;
         }
         
-        /* شاشة الملف الشخصي */
+        /* شاشة الملف الشخصي السريعة */
         #profile-screen { position: fixed; inset: 0; background: var(--bg-chat); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .profile-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; max-width: 320px; text-align: center; }
         .profile-card h2 { color: var(--primary); margin-bottom: 10px; font-size: 18px; }
-        .avatar-picker { display: flex; justify-content: center; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
-        .avatar-option { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
-        .avatar-option.selected { border-color: var(--primary); transform: scale(1.05); }
         .profile-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; text-align: center; font-size: 15px; margin-bottom: 12px; }
         .profile-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 20px; font-size: 15px; cursor: pointer; width: 100%; font-weight: bold; }
 
@@ -41,15 +38,15 @@
             position: absolute;
             right: 0; top: 0; bottom: 0;
             transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s ease;
         }
         .sidebar.open { transform: translateX(0); box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
         .sidebar-header { background-color: var(--primary-dark); color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 15px; }
         .rooms-list { flex: 1; overflow-y: auto; }
-        .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; color: #4a4a4a; font-size: 14px; }
+        .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; font-size: 14px; color: #4a4a4a; }
         .room-item.active { background-color: #f0f2f5; color: var(--primary); border-right: 4px solid var(--primary); font-weight: bold; }
 
-        /* منطقة المحادثة الرئيسية */
+        /* منطقة المحادثة */
         .main-chat { 
             flex: 1; 
             display: flex; 
@@ -67,12 +64,11 @@
             display: flex; 
             align-items: center; 
             gap: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-            z-index: 100; 
             height: 50px;
             min-height: 50px;
+            z-index: 100;
         }
-        .menu-toggle { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 4px; display: block; }
+        .menu-toggle { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
         #current-room-title { font-weight: bold; font-size: 13px; white-space: nowrap; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px; }
         
         .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.12); border-radius: 15px; padding: 4px 8px; display: flex; align-items: center; height: 28px; }
@@ -87,23 +83,373 @@
             gap: 12px; 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
             background-attachment: fixed;
-            scroll-behavior: smooth;
         }
         
         .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; }
         .msg-wrapper.me { align-self: flex-start; flex-direction: row; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
         
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-        
-        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 140px; position: relative; word-break: break-word; }
+        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 120px; position: relative; word-break: break-word; }
         .msg-wrapper.me .bubble { background-color: var(--light-green); border-top-left-radius: 0; }
         .msg-wrapper.other .bubble { background-color: #fff; border-top-right-radius: 0; }
         
         .sender-name { font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
         
-        .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid #0084ff; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; font-size: 12px; color: #555; }
-        .reply-quote-sender { font-weight: bold; font-size: 10px; color: #0084ff; display: block; }
-
         .media-content img { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; object-fit: cover; }
-        .media-content video { max-width: 100
+        .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 160px; background: #000; }
+        
+        /* تصميم شريط الصوت المدمج المحترف النظيف */
+        .audio-bubble-container { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.06); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 180px; }
+        .audio-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .audio-wave-line { flex: 1; height: 3px; background: rgba(0,0,0,0.15); position: relative; border-radius: 2px; }
+        .audio-title-tag { font-size: 10px; color: #555; }
+        .msg-time { font-size: 9px; color: #727272; align-self: flex-end; margin-top: 4px; }
+
+        /* منطقة الإدخال الاحترافية بتصميم الواتساب المتناسق 📱 */
+        .input-container-wa {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            gap: 6px;
+            background-color: transparent;
+            width: 100%;
+        }
+
+        .input-bar-wa {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 24px;
+            padding: 2px 12px;
+            gap: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            min-height: 45px;
+        }
+
+        .input-box {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            padding: 8px 0;
+            background: transparent;
+        }
+
+        .wa-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #717d84;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        /* زر المايك الدائري المنفصل */
+        .mic-btn-wa {
+            width: 45px;
+            height: 45px;
+            background-color: var(--whatsapp-green);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .mic-active-wa { background-color: #d32f2f !important; animation: pulse 1.2s infinite; }
+
+        #file-loader-cam, #file-loader-clip { display: none; }
+        
+        @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <div id="profile-screen" style="display: none;">
+        <div class="profile-card">
+            <h2>مرحباً بك في شات نبض ✨</h2>
+            <input type="text" class="profile-input" id="profile-name-input" placeholder="اكتب اسمك هنا للترحيب بك...">
+            <button class="profile-btn" id="save-profile-btn">دخول الشات</button>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">غرف شات نبض 💬</div>
+        <div class="rooms-list">
+            <div class="room-item active" data-room="room1">🌹 الديوان العام</div>
+            <div class="room-item" data-room="room2">🔥 غرفة الشباب</div>
+            <div class="room-item" data-room="room3">💡 ثقافة وأدب</div>
+        </div>
+    </div>
+
+    <div class="main-chat">
+        <div class="header">
+            <button class="menu-toggle" id="menu-btn">☰</button>
+            <span id="current-room-title">🌹 الديوان العام</span>
+            <div class="ticker-wrap">
+                <div class="ticker">
+                    🔥 شـــْـۛٱﺈت نـــْـۛبض ٱڵعرب يـــْـۛرحب بــْـۛڪم ويتمني لكم قضاء وقت ممتع 🎉 مع تحيات إدارة الشات 🎖️ التصميم برعاية "فـــْـۛٱﺈقد.ٱڵذٱڪرهٖ" ✨
+                </div>
+            </div>
+        </div>
+
+        <div class="messages" id="chat-messages"></div>
+
+        <div class="input-container-wa">
+            <div class="input-bar-wa">
+                <input type="file" id="file-loader-cam" accept="image/*,video/*">
+                <input type="file" id="file-loader-clip" accept="audio/*">
+
+                <button class="wa-icon-btn" id="clip-btn-wa" title="إرسال ملف صوتي">📎</button>
+                
+                <button class="wa-icon-btn" id="cam-btn-wa" title="إرسال صور وفيديو">📷</button>
+                
+                <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
+            </div>
+
+            <button class="mic-btn-wa" id="mic-send-btn-wa">🎙️</button>
+        </div>
+    </div>
+
+<script>
+    // تهيئة فايربيس الصحيحة والنظيفة 100% بدون أي خطأ في علامات التنصيص
+    const firebaseConfig = {
+        apiKey: "AIzaSyDE_X_H_88wzE_N6n_Yh155364355450",
+        authDomain: "chat1986-552fe.firebaseapp.com",
+        projectId: "chat1986-552fe",
+        storageBucket: "chat1986-552fe.appspot.com",
+        messagingSenderId: "155364355450",
+        appId: "1:155364355450:web:8e3dfb52f9b17bbd"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let currentRoom = "room1";
+    let unsubscribe = null;
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
+
+    let username = localStorage.getItem('chat_user_name');
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menu-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('message-input');
+    const micSendBtn = document.getElementById('mic-send-btn-wa');
+    const camBtn = document.getElementById('cam-btn-wa');
+    const clipBtn = document.getElementById('clip-btn-wa');
+    const fileLoaderCam = document.getElementById('file-loader-cam');
+    const fileLoaderClip = document.getElementById('file-loader-clip');
+
+    menuBtn.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
+    document.addEventListener('click', () => sidebar.classList.remove('open'));
+
+    if(!username) {
+        document.getElementById('profile-screen').style.display = "flex";
+    } else {
+        loadRoomMessages(currentRoom);
+    }
+
+    document.getElementById('save-profile-btn').addEventListener('click', () => {
+        const nameInput = document.getElementById('profile-name-input').value.trim();
+        if(!nameInput) return alert("من فضلك اكتب اسماً للدخول!");
+        username = nameInput;
+        localStorage.setItem('chat_user_name', username);
+        document.getElementById('profile-screen').style.display = "none";
+        loadRoomMessages(currentRoom);
+    });
+
+    // تبديل الأيقونة بذكاء عند الكتابة (واتساب ستايل)
+    messageInput.addEventListener('input', () => {
+        if(messageInput.value.trim() !== "") {
+            micSendBtn.innerHTML = "▼"; 
+            micSendBtn.style.backgroundColor = "#0084ff";
+        } else {
+            micSendBtn.innerHTML = "🎙️";
+            micSendBtn.style.backgroundColor = "var(--whatsapp-green)";
+        }
+    });
+
+    // جلب الرسائل النظيف والمقاوم للاهتزاز والبطء للغرف
+    function loadRoomMessages(roomId) {
+        if(unsubscribe) unsubscribe();
+        chatMessages.innerHTML = "";
+        
+        unsubscribe = db.collection("rooms").doc(roomId).collection("messages")
+        .orderBy("timestamp", "asc").limit(30)
+        .onSnapshot((snapshot) => {
+            chatMessages.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if(!data.sender) return;
+                
+                const isMe = data.sender === username;
+                const wrapper = document.createElement('div');
+                wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = "sender-name";
+                nameSpan.innerText = data.sender;
+                bubble.appendChild(nameSpan);
+                
+                if(data.text) {
+                    const textSpan = document.createElement('span');
+                    textSpan.innerText = data.text;
+                    bubble.appendChild(textSpan);
+                }
+                
+                if(data.mediaType === 'image') {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.className = "media-content";
+                    mediaDiv.innerHTML = `<img src="${data.mediaUrl}">`;
+                    bubble.appendChild(mediaDiv);
+                } else if(data.mediaType === 'video') {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.className = "media-content";
+                    mediaDiv.innerHTML = `<video controls src="${data.mediaUrl}"></video>`;
+                    bubble.appendChild(mediaDiv);
+                } else if(data.mediaType === 'audio') {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.className = "media-content";
+                    mediaDiv.innerHTML = `
+                        <div class="audio-bubble-container">
+                            <button class="audio-play-btn" onclick="playAudio(this, '${data.mediaUrl}')">▶</button>
+                            <div class="audio-wave-line"></div>
+                            <span class="audio-title-tag">صوتية 🎵</span>
+                        </div>`;
+                    bubble.appendChild(mediaDiv);
+                }
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.className = "msg-time";
+                if(data.timestamp) {
+                    timeSpan.innerText = data.timestamp.toDate().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    timeSpan.innerText = "الآن";
+                }
+                bubble.appendChild(timeSpan);
+                
+                wrapper.appendChild(bubble);
+                chatMessages.appendChild(wrapper);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    }
+
+    window.playAudio = function(btn, src) {
+        let audio = btn.audioObj;
+        if(!audio) { audio = new Audio(src); btn.audioObj = audio; audio.onended = () => btn.innerText = "▶"; }
+        if(audio.paused) { audio.play(); btn.innerText = "⏸"; } else { audio.pause(); btn.innerText = "▶"; }
+    };
+
+    function sendMessage() {
+        const text = messageInput.value.trim();
+        if (text === '') return;
+        
+        db.collection("rooms").doc(currentRoom).collection("messages").add({
+            sender: username,
+            text: text,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        messageInput.value = '';
+        micSendBtn.innerHTML = "🎙️";
+        micSendBtn.style.backgroundColor = "var(--whatsapp-green)";
+    }
+
+    micSendBtn.addEventListener('click', () => {
+        if(messageInput.value.trim() !== "") {
+            sendMessage();
+        } else {
+            handleVoiceRecording();
+        }
+    });
+
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    camBtn.addEventListener('click', () => fileLoaderCam.click());
+    clipBtn.addEventListener('click', () => fileLoaderClip.click());
+
+    function handleFileSelection(file, type) {
+        if(!file) return;
+        messageInput.placeholder = "⏳ جاري الرفع بالخلفية...";
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            db.collection("rooms").doc(currentRoom).collection("messages").add({
+                sender: username,
+                mediaUrl: reader.result,
+                mediaType: type,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => { messageInput.placeholder = "اكتب رسالة..."; });
+        };
+    }
+
+    fileLoaderCam.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const type = file && file.type.startsWith('video/') ? 'video' : 'image';
+        handleFileSelection(file, type);
+    });
+
+    fileLoaderClip.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        handleFileSelection(file, 'audio');
+    });
+
+    async function handleVoiceRecording() {
+        if (!isRecording) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = () => {
+                        db.collection("rooms").doc(currentRoom).collection("messages").add({
+                            sender: username,
+                            mediaUrl: reader.result,
+                            mediaType: 'audio',
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    };
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                micSendBtn.classList.add('mic-active-wa');
+                messageInput.placeholder = "🎙️ جاري التسجيل الحي...";
+            } catch (err) { alert("برجاء تفعيل المايك."); }
+        } else {
+            mediaRecorder.stop();
+            isRecording = false;
+            micSendBtn.classList.remove('mic-active-wa');
+            messageInput.placeholder = "اكتب رسالة...";
+        }
+    }
+
+    // ربط الغرف المضمون
+    document.querySelectorAll('.room-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            document.querySelectorAll('.room-item').forEach(r => r.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentRoom = e.currentTarget.getAttribute('data-room');
+            document.getElementById('current-room-title').innerText = e.currentTarget.innerText;
+            sidebar.classList.remove('open');
+            loadRoomMessages(currentRoom);
+        });
+    });
+</script>
+</body>
+</html>
