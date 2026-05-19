@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat 1986 Pro - النسخة المستقرة</title>
+<style>
+    body { margin:0; font-family: sans-serif; background:#ece5dd; overflow: hidden; }
+    .chat-container { display:flex; flex-direction:column; height:100vh; max-width:500px; margin:auto; background:#fff; }
+    .messages { flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; background:#f7f1ea; gap: 12px; }
+    #notify-bar { background: #e8f5e9; padding: 8px; text-align: center; font-size: 12px; border-bottom: 1px solid #c8e6c9; color: #2e7d32; font-weight: bold; }
+    
+    .msg-wrapper { display: flex; align-items: flex-end; gap: 8px; width: 100%; margin-bottom: 5px; }
+    .me-wrapper { flex-direction: row-reverse; }
+    .avatar { width: 35px; height: 35px; border-radius: 50%; background: #fff; border: 1px solid #ddd; }
+    .bubble { padding: 8px 12px; border-radius: 12px; max-width: 75%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; }
+    .me { background: #DCF8C6; } 
+    .other { background: #fff; }
+    .header-info { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .name { font-size: 11px; font-weight: bold; }
+    .time-inline { font-size: 10px; color: #888; }
+    .is-me { color: #25D366; } .is-other { color: #e91e63; }
+    .text-content { font-size: 14px; line-height: 1.4; word-break: break-all; }
+    
+    .chat-img { max-width: 100%; border-radius: 8px; margin-top: 5px; display: block; max-height: 200px; object-fit: cover; }
+    audio { max-width: 100%; margin-top: 5px; display: block; }
+
+    .msg-actions { display: flex; gap: 12px; margin-top: 6px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
+    .msg-actions button { background: none; border: none; font-size: 11px; color: #555; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; }
+    .liked { color: #25D366 !important; font-weight: bold; }
+    
+    #reply-box { display: none; background: #e3f2fd; padding: 8px; border-right: 4px solid #2196F3; font-size: 12px; position: relative; }
+    #reply-box span { display: block; color: #1976d2; font-weight: bold; }
+    
+    .input-area { display: flex; padding: 10px; background: #f0f0f0; gap: 5px; align-items: center; position: relative; }
+    input[type="text"] { flex: 1; padding: 12px 15px; border: none; border-radius: 25px; outline: none; background: white; font-size: 14px; }
+    .round-btn { width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; }
+    .btn-send { background: #25D366; }   
+</style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div id="notify-bar">✨ السيرفر الفوري شغال وصلاحية الأمان مفعّلة للأبد 🔓</div>
+    <div id="messages" class="messages"></div>
+    
+    <div id="reply-box">
+        <span id="reply-name"></span>
+        <div id="reply-text"></div>
+        <button onclick="cancelReply()" style="position:absolute; left:10px; top:5px; border:none; background:none; cursor:pointer;">✖</button>
+    </div>
+
+    <div class="input-area">
+        <button class="round-btn btn-send" onclick="sendText()">➤</button>
+        <input id="text" type="text" placeholder="اكتب رسالة أو ضع رابط صورة/صوت..." onkeypress="if(event.key==='Enter') sendText()">
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAl4pDJfr7kt-U-dFhu_ug1tw1qFyDW9As",
+  authDomain: "chat1986-552fe.firebaseapp.com",
+  projectId: "chat1986-552fe"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let userId = localStorage.getItem("chat_uid") || "user_" + Math.floor(Math.random() * 10000);
+localStorage.setItem("chat_uid", userId);
+let userName = localStorage.getItem("chat_name") || prompt("اسمك الكريم؟") || "زائر";
+localStorage.setItem("chat_name", userName);
+
+let currentReply = null;
+
+function setReply(name, text) {
+    currentReply = { name, text };
+    document.getElementById("reply-name").innerText = "الرد على " + name;
+    document.getElementById("reply-text").innerText = text;
+    document.getElementById("reply-box").style.display = "block";
+    document.getElementById("text").focus();
+}
+
+function cancelReply() {
+    currentReply = null;
+    document.getElementById("reply-box").style.display = "none";
+}
+
+function sendText(){
+    const input = document.getElementById("text");
+    const val = input.value.trim();
+    if(!val) return;
+
+    input.value = "";
+    const replyToSend = currentReply;
+    cancelReply();
+
+    db.collection("messages").add({
+        senderId: userId,
+        senderName: userName,
+        avatar: `https://robohash.org/${userId}?set=set5`,
+        text: val,
+        time: Date.now(),
+        likes: [],
+        replyData: replyToSend
+    });
+}
+
+async function toggleLike(docId, likesArray) {
+    const ref = db.collection("messages").doc(docId);
+    if(likesArray.includes(userId)) {
+        await ref.update({ likes: firebase.firestore.FieldValue.arrayRemove(userId) });
+    } else {
+        await ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(userId) });
+    }
+}
+
+// دالة ذكية للتحقق من الروابط وتحويلها لملفات ميديا مرئية ومسموعة فوراً
+function checkMedia(text) {
+    let mediaHtml = "";
+    const imgRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
+    const audioRegex = /(https?:\/\/.*\.(?:mp3|wav|ogg))/i;
+    
+    if(imgRegex.test(text)) {
+        const match = text.match(imgRegex);
+        mediaHtml += `<img src="${match[0]}" class="chat-img">`;
+    }
+    if(audioRegex.test(text)) {
+        const match = text.match(audioRegex);
+        mediaHtml += `<audio src="${match[0]}" controls></audio>`;
+    }
+    return mediaHtml;
+}
+
+db.collection("messages").orderBy("time").limitToLast(50).onSnapshot(snap => {
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
+    snap.forEach(doc => {
+        const m = doc.data();
+        const isMe = m.senderId === userId;
+        const hasLiked = m.likes && m.likes.includes(userId);
+        const timeStr = new Date(m.time).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
+
+        const wrap = document.createElement("div");
+        wrap.className = `msg-wrapper ${isMe ? 'me-wrapper' : ''}`;
+        
+        let replyHtml = m.replyData ? `<div style="background:rgba(0,0,0,0.05); padding:5px; border-right:3px solid #25D366; font-size:11px; margin-bottom:5px;"><b>${m.replyData.name}:</b> ${m.replyData.text}</div>` : "";
+        
+        // تشغيل نظام الميديا الذكي تلقائياً عند إرسال أي رابط
+        let mediaHtml = checkMedia(m.text);
+
+        wrap.innerHTML = `
+            <img src="${m.avatar}" class="avatar">
+            <div class="bubble ${isMe ? 'me' : 'other'}">
+                <div class="header-info">
+                    <span class="name ${isMe?'is-me':'is-other'}">${isMe?"أنا":m.senderName}</span>
+                    <span class="time-inline">${timeStr}</span>
+                </div>
+                ${replyHtml}
+                <div class="text-content">${m.text}</div>
+                ${mediaHtml}
+                <div class="msg-actions">
+                    <button class="${hasLiked?'liked':''}" onclick="toggleLike('${doc.id}', ${JSON.stringify(m.likes || [])})">👍 ${m.likes?.length || 0}</button>
+                    <button onclick="setReply('${m.senderName}', '${m.text}')">↩️ رد</button>
+                </div>
+            </div>`;
+        box.appendChild(wrap);
+    });
+    box.scrollTop = box.scrollHeight;
+});
+</script>
+</body>
+</html>
