@@ -3,171 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض - النسخة المستقرة المصفاة</title>
+    <title>شات نبض - النسخة الذهبية المتكاملة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
         :root { --primary: #075e54; --primary-dark: #054d44; --light-green: #e1ffc7; --bg-chat: #efe7dd; --whatsapp-green: #1fa855; }
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         
-        body { 
-            background-color: var(--bg-chat); 
-            display: flex; 
-            height: 100vh; 
-            max-height: 100vh;
-            overflow: hidden; 
-            width: 100vw;
-        }
+        body { background-color: var(--bg-chat); display: flex; height: 100vh; max-height: 100vh; overflow: hidden; width: 100vw; }
         
-        /* شاشة الملف الشخصي السريعة */
         #profile-screen { position: fixed; inset: 0; background: var(--bg-chat); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .profile-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; max-width: 320px; text-align: center; }
         .profile-card h2 { color: var(--primary); margin-bottom: 10px; font-size: 18px; }
         .profile-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; text-align: center; font-size: 15px; margin-bottom: 12px; }
         .profile-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 20px; font-size: 15px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        /* القائمة الجانبية */
-        .sidebar { 
-            width: 240px; 
-            background-color: #ffffff; 
-            border-left: 1px solid #e1e1e1; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100%;
-            z-index: 1500; 
-            position: absolute;
-            right: 0; top: 0; bottom: 0;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
+        .sidebar { width: 240px; background-color: #ffffff; border-left: 1px solid #e1e1e1; display: flex; flex-direction: column; height: 100%; z-index: 1500; position: absolute; right: 0; top: 0; bottom: 0; transform: translateX(100%); transition: transform 0.3s ease; }
         .sidebar.open { transform: translateX(0); box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
         .sidebar-header { background-color: var(--primary-dark); color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 15px; }
         .rooms-list { flex: 1; overflow-y: auto; }
         .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; font-size: 14px; color: #4a4a4a; }
         .room-item.active { background-color: #f0f2f5; color: var(--primary); border-right: 4px solid var(--primary); font-weight: bold; }
 
-        /* منطقة المحادثة */
-        .main-chat { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100%; 
-            width: 100vw;
-            position: relative; 
-            overflow: hidden;
-        }
+        .main-chat { flex: 1; display: flex; flex-direction: column; height: 100%; width: 100vw; position: relative; overflow: hidden; }
         
-        .header { 
-            background-color: var(--primary); 
-            color: white; 
-            padding: 0 12px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            height: 50px;
-            min-height: 50px;
-            z-index: 100;
-        }
+        .header { background-color: var(--primary); color: white; padding: 0 12px; display: flex; align-items: center; gap: 8px; height: 50px; min-height: 50px; z-index: 100; }
         .menu-toggle { background: none; border: none; color: white; font-size: 22px; cursor: pointer; }
         #current-room-title { font-weight: bold; font-size: 13px; white-space: nowrap; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px; }
         
         .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.12); border-radius: 15px; padding: 4px 8px; display: flex; align-items: center; height: 28px; }
         .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: marquee 22s linear infinite; font-size: 12px; color: #fff; }
 
-        .messages { 
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-attachment: fixed;
-        }
+        .messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-attachment: fixed; }
         
         .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; }
         .msg-wrapper.me { align-self: flex-start; flex-direction: row; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
         
-        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 120px; position: relative; word-break: break-word; }
+        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 150px; position: relative; word-break: break-word; }
         .msg-wrapper.me .bubble { background-color: var(--light-green); border-top-left-radius: 0; }
         .msg-wrapper.other .bubble { background-color: #fff; border-top-right-radius: 0; }
         
         .sender-name { font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
         
+        /* اقتباس الرد */
+        .reply-quote-block { background: rgba(0, 0, 0, 0.05); border-right: 3px solid #0084ff; padding: 4px 6px; border-radius: 4px; margin-bottom: 6px; font-size: 12px; color: #444; }
+        .reply-quote-user { font-weight: bold; font-size: 10px; color: #0084ff; display: block; margin-bottom: 1px; }
+
         .media-content img { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; object-fit: cover; }
         .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 160px; background: #000; }
         
-        /* تصميم شريط الصوت المدمج المحترف النظيف */
         .audio-bubble-container { display: flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.06); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 180px; }
         .audio-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .audio-wave-line { flex: 1; height: 3px; background: rgba(0,0,0,0.15); position: relative; border-radius: 2px; }
         .audio-title-tag { font-size: 10px; color: #555; }
-        .msg-time { font-size: 9px; color: #727272; align-self: flex-end; margin-top: 4px; }
 
-        /* منطقة الإدخال الاحترافية بتصميم الواتساب المتناسق 📱 */
-        .input-container-wa {
-            display: flex;
-            align-items: center;
-            padding: 6px 8px;
-            gap: 6px;
-            background-color: transparent;
-            width: 100%;
-        }
+        /* شريط التفاعل والتحكم أسفل الفقاعة */
+        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: 8px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.03); }
+        .footer-actions { display: flex; gap: 8px; align-items: center; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #666; display: flex; align-items: center; gap: 2px; }
+        .action-btn:hover { color: var(--primary); }
+        .msg-time { font-size: 9px; color: #727272; }
 
-        .input-bar-wa {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            background-color: #ffffff;
-            border-radius: 24px;
-            padding: 2px 12px;
-            gap: 10px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            min-height: 45px;
-        }
+        /* صندوق معاينة الرد أعلى شريط الإدخال */
+        .reply-preview-area { background: #e9ecef; padding: 6px 12px; display: none; align-items: center; justify-content: space-between; border-right: 4px solid #0084ff; font-size: 12px; border-top-left-radius: 8px; border-top-right-radius: 8px; margin: 0 8px; }
 
-        .input-box {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 15px;
-            padding: 8px 0;
-            background: transparent;
-        }
+        /* شريط الإدخال (تصميم الواتساب المطابق تماماً) */
+        .input-container-wa { display: flex; flex-direction: column; padding: 6px 8px; gap: 4px; background-color: transparent; width: 100%; }
+        .input-row { display: flex; align-items: center; gap: 6px; width: 100%; }
+        .input-bar-wa { flex: 1; display: flex; align-items: center; background-color: #ffffff; border-radius: 24px; padding: 2px 12px; gap: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); min-height: 45px; }
+        .input-box { flex: 1; border: none; outline: none; font-size: 15px; padding: 8px 0; background: transparent; }
+        .wa-icon-btn { background: none; border: none; cursor: pointer; font-size: 20px; color: #717d84; display: flex; align-items: center; justify-content: center; padding: 4px; }
 
-        .wa-icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            color: #717d84;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px;
-        }
-
-        /* زر المايك الدائري المنفصل */
-        .mic-btn-wa {
-            width: 45px;
-            height: 45px;
-            background-color: var(--whatsapp-green);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-            flex-shrink: 0;
-        }
+        .mic-btn-wa { width: 45px; height: 45px; background-color: var(--whatsapp-green); border: none; border-radius: 50%; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.2); flex-shrink: 0; }
         .mic-active-wa { background-color: #d32f2f !important; animation: pulse 1.2s infinite; }
 
         #file-loader-cam, #file-loader-clip { display: none; }
-        
         @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
     </style>
@@ -205,23 +116,29 @@
         <div class="messages" id="chat-messages"></div>
 
         <div class="input-container-wa">
-            <div class="input-bar-wa">
-                <input type="file" id="file-loader-cam" accept="image/*,video/*">
-                <input type="file" id="file-loader-clip" accept="audio/*">
-
-                <button class="wa-icon-btn" id="clip-btn-wa" title="إرسال ملف صوتي">📎</button>
-                
-                <button class="wa-icon-btn" id="cam-btn-wa" title="إرسال صور وفيديو">📷</button>
-                
-                <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
+            <div class="reply-preview-area" id="reply-preview-container">
+                <div>
+                    <span id="reply-user-title" style="font-weight: bold; color: #0084ff; display: block; font-size: 11px;"></span>
+                    <span id="reply-text-title" style="color: #555;"></span>
+                </div>
+                <button style="background: none; border: none; color: #d32f2f; font-weight: bold; cursor: pointer; font-size: 14px;" id="close-reply-btn">✕</button>
             </div>
 
-            <button class="mic-btn-wa" id="mic-send-btn-wa">🎙️</button>
+            <div class="input-row">
+                <div class="input-bar-wa">
+                    <input type="file" id="file-loader-cam" accept="image/*,video/*">
+                    <input type="file" id="file-loader-clip" accept="audio/*">
+
+                    <button class="wa-icon-btn" id="clip-btn-wa" title="إرسال ملف صوتي">📎</button>
+                    <button class="wa-icon-btn" id="cam-btn-wa" title="إرسال صور وفيديو">📷</button>
+                    <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
+                </div>
+                <button class="mic-btn-wa" id="mic-send-btn-wa">🎙️</button>
+            </div>
         </div>
     </div>
 
 <script>
-    // تهيئة فايربيس الصحيحة والنظيفة 100% بدون أي خطأ في علامات التنصيص
     const firebaseConfig = {
         apiKey: "AIzaSyDE_X_H_88wzE_N6n_Yh155364355450",
         authDomain: "chat1986-552fe.firebaseapp.com",
@@ -239,6 +156,11 @@
     let audioChunks = [];
     let isRecording = false;
 
+    // متغيرات نظام الرد
+    let replyTargetId = null;
+    let replyTargetUser = "";
+    let replyTargetText = "";
+
     let username = localStorage.getItem('chat_user_name');
     const sidebar = document.getElementById('sidebar');
     const menuBtn = document.getElementById('menu-btn');
@@ -249,6 +171,11 @@
     const clipBtn = document.getElementById('clip-btn-wa');
     const fileLoaderCam = document.getElementById('file-loader-cam');
     const fileLoaderClip = document.getElementById('file-loader-clip');
+    
+    const replyPreviewContainer = document.getElementById('reply-preview-container');
+    const replyUserTitle = document.getElementById('reply-user-title');
+    const replyTextTitle = document.getElementById('reply-text-title');
+    const closeReplyBtn = document.getElementById('close-reply-btn');
 
     menuBtn.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); });
     document.addEventListener('click', () => sidebar.classList.remove('open'));
@@ -268,7 +195,6 @@
         loadRoomMessages(currentRoom);
     });
 
-    // تبديل الأيقونة بذكاء عند الكتابة (واتساب ستايل)
     messageInput.addEventListener('input', () => {
         if(messageInput.value.trim() !== "") {
             micSendBtn.innerHTML = "▼"; 
@@ -279,17 +205,20 @@
         }
     });
 
-    // جلب الرسائل النظيف والمقاوم للاهتزاز والبطء للغرف
+    // جلب الرسائل السريع جداً (محدد بآخر 20 رسالة فقط لمنع البطء والتعليق)
     function loadRoomMessages(roomId) {
         if(unsubscribe) unsubscribe();
         chatMessages.innerHTML = "";
         
         unsubscribe = db.collection("rooms").doc(roomId).collection("messages")
-        .orderBy("timestamp", "asc").limit(30)
+        .orderBy("timestamp", "desc").limit(20)
         .onSnapshot((snapshot) => {
+            const rawDocs = [];
+            snapshot.forEach(doc => rawDocs.unshift({ id: doc.id, ...doc.data() }));
+            
             chatMessages.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
+            
+            rawDocs.forEach((data) => {
                 if(!data.sender) return;
                 
                 const isMe = data.sender === username;
@@ -304,6 +233,14 @@
                 nameSpan.innerText = data.sender;
                 bubble.appendChild(nameSpan);
                 
+                // عرض المقتبس إذا كانت الرسالة رداً على رسالة أخرى
+                if(data.isReply && data.replyToUser) {
+                    const quoteDiv = document.createElement('div');
+                    quoteDiv.className = "reply-quote-block";
+                    quoteDiv.innerHTML = `<span class="reply-quote-user">@ ${data.replyToUser}</span>${data.replyToText || 'ملف وسائط'}`;
+                    bubble.appendChild(quoteDiv);
+                }
+
                 if(data.text) {
                     const textSpan = document.createElement('span');
                     textSpan.innerText = data.text;
@@ -318,7 +255,7 @@
                 } else if(data.mediaType === 'video') {
                     const mediaDiv = document.createElement('div');
                     mediaDiv.className = "media-content";
-                    mediaDiv.innerHTML = `<video controls src="${data.mediaUrl}"></video>`;
+                    mediaDiv.innerHTML = `<video controls playsinline preload="metadata" src="${data.mediaUrl}"></video>`;
                     bubble.appendChild(mediaDiv);
                 } else if(data.mediaType === 'audio') {
                     const mediaDiv = document.createElement('div');
@@ -332,6 +269,29 @@
                     bubble.appendChild(mediaDiv);
                 }
                 
+                // شريط السفلي للتفاعل والرد والوقت
+                const footer = document.createElement('div');
+                footer.className = "bubble-footer";
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = "footer-actions";
+                
+                // زر الإعجاب الفوري
+                const likesCount = data.likes || 0;
+                const likeBtn = document.createElement('button');
+                likeBtn.className = "action-btn";
+                likeBtn.innerHTML = `👍 <span id="like-count-${data.id}">${likesCount}</span>`;
+                likeBtn.onclick = () => handleLike(data.id, likesCount);
+                
+                // زر الرد الفوري
+                const replyBtn = document.createElement('button');
+                replyBtn.className = "action-btn";
+                replyBtn.innerHTML = `💬 رد`;
+                replyBtn.onclick = () => triggerReply(data.id, data.sender, data.text || 'ملف وسائط');
+                
+                actionsDiv.appendChild(likeBtn);
+                actionsDiv.appendChild(replyBtn);
+                
                 const timeSpan = document.createElement('span');
                 timeSpan.className = "msg-time";
                 if(data.timestamp) {
@@ -339,7 +299,10 @@
                 } else {
                     timeSpan.innerText = "الآن";
                 }
-                bubble.appendChild(timeSpan);
+                
+                footer.appendChild(actionsDiv);
+                footer.appendChild(timeSpan);
+                bubble.appendChild(footer);
                 
                 wrapper.appendChild(bubble);
                 chatMessages.appendChild(wrapper);
@@ -354,16 +317,56 @@
         if(audio.paused) { audio.play(); btn.innerText = "⏸"; } else { audio.pause(); btn.innerText = "▶"; }
     };
 
+    // معالجة نظام الرد وتفعيله
+    function triggerReply(msgId, sender, text) {
+        replyTargetId = msgId;
+        replyTargetUser = sender;
+        replyTargetText = text.length > 40 ? text.substring(0, 40) + "..." : text;
+        
+        replyUserTitle.innerText = `الرد على المبدع: ${replyTargetUser}`;
+        replyTextTitle.innerText = replyTargetText;
+        replyPreviewContainer.style.display = "flex";
+        messageInput.focus();
+    }
+
+    closeReplyBtn.addEventListener('click', cancelReply);
+    function cancelReply() {
+        replyTargetId = null;
+        replyTargetUser = "";
+        replyTargetText = "";
+        replyPreviewContainer.style.display = "none";
+    }
+
+    // دالة الإعجاب الفوري والآمن
+    function handleLike(msgId, currentLikes) {
+        db.collection("rooms").doc(currentRoom).collection("messages").doc(msgId).update({
+            likes: currentLikes + 1
+        });
+    }
+
     function sendMessage() {
         const text = messageInput.value.trim();
         if (text === '') return;
         
-        db.collection("rooms").doc(currentRoom).collection("messages").add({
+        const messagePayload = {
             sender: username,
             text: text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            likes: 0
+        };
+
+        // دمج بيانات الرد إن وُجدت
+        if(replyTargetId) {
+            messagePayload.isReply = true;
+            messagePayload.replyToId = replyTargetId;
+            messagePayload.replyToUser = replyTargetUser;
+            messagePayload.replyToText = replyTargetText;
+        }
+        
+        db.collection("rooms").doc(currentRoom).collection("messages").add(messagePayload);
+        
         messageInput.value = '';
+        cancelReply();
         micSendBtn.innerHTML = "🎙️";
         micSendBtn.style.backgroundColor = "var(--whatsapp-green)";
     }
@@ -382,7 +385,14 @@
 
     function handleFileSelection(file, type) {
         if(!file) return;
-        messageInput.placeholder = "⏳ جاري الرفع بالخلفية...";
+        
+        // منع رفع الملفات الضخمة جداً لحماية الذاكرة والسرعة
+        if (file.size > 12 * 1024 * 1024) { 
+            alert("حجم الملف كبير جداً! يرجى اختيار ملف أقل من 12 ميجا بايت لضمان سرعة الرفع الحية.");
+            return;
+        }
+
+        messageInput.placeholder = "⏳ جاري معالجة الرفع بالخلفية...";
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
@@ -390,14 +400,16 @@
                 sender: username,
                 mediaUrl: reader.result,
                 mediaType: type,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                likes: 0
             }).then(() => { messageInput.placeholder = "اكتب رسالة..."; });
         };
     }
 
     fileLoaderCam.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        const type = file && file.type.startsWith('video/') ? 'video' : 'image';
+        if(!file) return;
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
         handleFileSelection(file, type);
     });
 
@@ -422,15 +434,16 @@
                             sender: username,
                             mediaUrl: reader.result,
                             mediaType: 'audio',
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            likes: 0
                         });
                     };
                 };
                 mediaRecorder.start();
                 isRecording = true;
                 micSendBtn.classList.add('mic-active-wa');
-                messageInput.placeholder = "🎙️ جاري التسجيل الحي...";
-            } catch (err) { alert("برجاء تفعيل المايك."); }
+                messageInput.placeholder = "🎙️ جاري التسجيل الحي الآن...";
+            } catch (err) { alert("برجاء تفعيل صلاحية المايك."); }
         } else {
             mediaRecorder.stop();
             isRecording = false;
@@ -439,7 +452,6 @@
         }
     }
 
-    // ربط الغرف المضمون
     document.querySelectorAll('.room-item').forEach(item => {
         item.addEventListener('click', (e) => {
             document.querySelectorAll('.room-item').forEach(r => r.classList.remove('active'));
@@ -447,6 +459,7 @@
             currentRoom = e.currentTarget.getAttribute('data-room');
             document.getElementById('current-room-title').innerText = e.currentTarget.innerText;
             sidebar.classList.remove('open');
+            cancelReply();
             loadRoomMessages(currentRoom);
         });
     });
