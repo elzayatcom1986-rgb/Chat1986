@@ -2,92 +2,160 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شات نبض - الجيل الثالث المطور</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>شات نبض - النسخة المستقرة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
         :root { --primary: #075e54; --primary-dark: #054d44; --light-green: #e1ffc7; --bg-chat: #efe7dd; }
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-chat); display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* شاشة تسجيل الملف الشخصي الاحترافية */
-        #profile-screen { position: fixed; inset: 0; background: #efe7dd; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .profile-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 340px; text-align: center; }
-        .profile-card h2 { color: var(--primary); margin-top: 0; font-size: 20px; }
-        .avatar-picker { display: flex; justify-content: center; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
-        .avatar-option { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s; }
-        .avatar-option.selected { border-color: var(--primary); transform: scale(1.1); }
-        .profile-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 25px; outline: none; text-align: center; font-size: 16px; margin-bottom: 15px; }
-        .profile-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; font-weight: bold; }
-
-        /* القائمة الجانبية للغرف */
-        .sidebar { width: 260px; background-color: #ffffff; border-left: 1px solid #e1e1e1; display: flex; flex-direction: column; z-index: 20; transition: all 0.3s ease; }
-        .sidebar-header { background-color: var(--primary-dark); color: white; padding: 16px; font-weight: bold; text-align: center; font-size: 16px; }
-        .rooms-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-        .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; color: #4a4a4a; }
-        .room-item.active { background-color: #ebebeb; color: var(--primary); border-right: 4px solid var(--primary); }
-
-        /* منطقة المحادثة */
-        .main-chat { flex: 1; display: flex; flex-direction: column; height: 100vh; position: relative; }
-        .header { background-color: var(--primary); color: white; padding: 10px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; height: 55px; }
-        .menu-toggle { background: none; border: none; color: white; font-size: 22px; cursor: pointer; display: none; }
-        #current-room-title { font-weight: bold; font-size: 15px; white-space: nowrap; border-left: 2px solid rgba(255,255,255,0.3); padding-left: 8px; }
+        body { 
+            margin: 0; 
+            padding: 0;
+            background-color: var(--bg-chat); 
+            display: flex; 
+            height: 100vh; 
+            max-height: 100vh;
+            overflow: hidden; 
+            width: 100vw;
+        }
         
-        /* شريط الإعلان المتحرك الزخرفي */
-        .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.15); border-radius: 20px; padding: 4px 10px; display: flex; align-items: center; height: 32px; }
-        .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: marquee 25s linear infinite; font-size: 13px; color: #fff; }
+        /* شاشة دخول كلاسيكية وبسيطة بدون تعقيد وبأبعاد مضبوطة */
+        #profile-screen { position: fixed; inset: 0; background: var(--bg-chat); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .profile-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; max-width: 320px; text-align: center; }
+        .profile-card h2 { color: var(--primary); margin-top: 0; font-size: 18px; }
+        .avatar-picker { display: flex; justify-content: center; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+        .avatar-option { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .avatar-option.selected { border-color: var(--primary); transform: scale(1.05); }
+        .profile-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; text-align: center; font-size: 15px; margin-bottom: 12px; }
+        .profile-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 20px; font-size: 15px; cursor: pointer; width: 100%; font-weight: bold; }
 
-        .messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
+        /* القائمة الجانبية المستقرة للغرف */
+        .sidebar { 
+            width: 240px; 
+            background-color: #ffffff; 
+            border-left: 1px solid #e1e1e1; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%;
+            z-index: 1500; 
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar.open { transform: translateX(0); box-shadow: -2px 0 10px rgba(0,0,0,0.15); }
+        .sidebar-header { background-color: var(--primary-dark); color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 15px; }
+        .rooms-list { flex: 1; overflow-y: auto; }
+        .room-item { padding: 14px 16px; border-bottom: 1px solid #f0f2f5; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500; color: #4a4a4a; font-size: 14px; }
+        .room-item.active { background-color: #f0f2f5; color: var(--primary); border-right: 4px solid var(--primary); font-weight: bold; }
+
+        /* منطقة المحادثة الثابتة والموزونة */
+        .main-chat { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%; 
+            width: 100vw;
+            position: relative; 
+            overflow: hidden;
+        }
         
-        /* نظام الفقاعات والصور المحدث */
-        .msg-wrapper { display: flex; align-items: flex-end; gap: 8px; max-width: 85%; animation: fadeIn 0.2s ease; }
+        /* الهيدر المطور والمقاوم للزحام */
+        .header { 
+            background-color: var(--primary); 
+            color: white; 
+            padding: 0 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            z-index: 100; 
+            height: 50px;
+            min-height: 50px;
+        }
+        .menu-toggle { background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px; display: block; }
+        #current-room-title { font-weight: bold; font-size: 13px; white-space: nowrap; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 12px; }
+        
+        /* شريط الإعلان المتحرك الموزون بدقة */
+        .ticker-wrap { flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.12); border-radius: 15px; padding: 4px 8px; display: flex; align-items: center; height: 28px; }
+        .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: marquee 22s linear infinite; font-size: 12px; color: #fff; }
+
+        /* صندوق الرسائل المستقر تماماً وبخلفية كلاسيكية */
+        .messages { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-size: auto;
+        }
+        
+        /* نظام فقاعات متناسق */
+        .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 88%; animation: fadeIn 0.15s ease; }
         .msg-wrapper.me { align-self: flex-start; flex-direction: row; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
         
-        .user-avatar { width: 38px; height: 38px; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.15); flex-shrink: 0; object-fit: cover; }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); flex-shrink: 0; object-fit: cover; }
         
-        .bubble { padding: 8px 12px; border-radius: 14px; font-size: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.12); display: flex; flex-direction: column; position: relative; min-width: 140px; }
+        .bubble { padding: 8px 10px; border-radius: 12px; font-size: 14px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); display: flex; flex-direction: column; position: relative; min-width: 120px; }
         .msg-wrapper.me .bubble { background-color: var(--light-green); border-top-left-radius: 0; }
         .msg-wrapper.other .bubble { background-color: #fff; border-top-right-radius: 0; }
         
-        .sender-name { font-size: 12px; font-weight: bold; color: #075e54; margin-bottom: 3px; }
+        .sender-name { font-size: 11px; font-weight: bold; color: #075e54; margin-bottom: 2px; }
         .msg-wrapper.other .sender-name { color: #34b7f1; }
         
-        /* صندوق الاقتباس للرد داخل الفقاعة */
-        .reply-quote { background: rgba(0,0,0,0.06); border-right: 4px solid #0084ff; padding: 5px 8px; border-radius: 4px; margin-bottom: 5px; font-size: 13px; color: #555; }
-        .reply-quote-sender { font-weight: bold; font-size: 11px; color: #0084ff; display: block; }
+        .reply-quote { background: rgba(0,0,0,0.05); border-right: 3px solid #0084ff; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; font-size: 12px; color: #555; }
+        .reply-quote-sender { font-weight: bold; font-size: 10px; color: #0084ff; display: block; }
 
-        /* منطقة التفاعلات والرد أسفل الرسالة */
-        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; gap: 10px; border-top: 1px solid rgba(0,0,0,0.04); padding-top: 4px; }
-        .reactions { display: flex; gap: 8px; }
-        .react-btn { background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px 4px; display: flex; align-items: center; gap: 3px; color: #666; border-radius: 10px; transition: 0.1s; }
-        .react-btn:hover { background: rgba(0,0,0,0.05); }
-        .msg-time { font-size: 10px; color: #727272; white-space: nowrap; }
+        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; gap: 8px; border-top: 1px solid rgba(0,0,0,0.03); padding-top: 2px; }
+        .reactions { display: flex; gap: 6px; }
+        .react-btn { background: none; border: none; cursor: pointer; font-size: 11px; padding: 2px; display: flex; align-items: center; gap: 2px; color: #666; }
+        .msg-time { font-size: 9px; color: #727272; white-space: nowrap; }
+        .reply-trigger-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #0084ff; padding: 2px; }
+
+        /* شريط الرد المعلق فوق منطقة الإدخال */
+        .reply-preview-box { background: #e2e8f0; padding: 6px 12px; display: none; align-items: center; justify-content: space-between; border-right: 4px solid #0084ff; font-size: 12px; min-height: 35px; }
         
-        /* زر سهم الرد السريع */
-        .reply-trigger-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #0084ff; padding: 2px; visibility: hidden; }
-        .bubble:hover .reply-trigger-btn { visibility: visible; }
-
-        /* شريط معاينة الرد الاقتباسي فوق صندوق الكتابة */
-        .reply-preview-box { background: #e2e8f0; padding: 8px 12px; display: none; align-items: center; justify-content: space-between; border-right: 4px solid #0084ff; font-size: 13px; }
+        .media-content img, .media-content video { max-width: 100%; border-radius: 6px; margin-top: 4px; display: block; max-height: 180px; }
         
-        /* عرض الميديا */
-        .media-content img, .media-content video { max-width: 100%; border-radius: 8px; margin-top: 4px; display: block; max-height: 220px; }
-        .custom-audio-player { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.04); padding: 6px 12px; border-radius: 20px; min-width: 180px; margin-top: 4px; }
-        .play-btn { width: 28px; height: 28px; border-radius: 50%; background-color: var(--primary); color: white; border: none; cursor: pointer; }
+        /* 🎙️ ستايل نظام الصوت الاحترافي الجديد والمميز */
+        .custom-audio-player { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.05); padding: 6px 10px; border-radius: 15px; min-width: 160px; margin-top: 4px; }
+        .play-btn { width: 26px; height: 26px; border-radius: 50%; background-color: var(--primary); color: white; border: none; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; }
 
-        /* شريط الإدخال */
-        .input-area { background-color: #f0f2f5; padding: 10px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #e1e1e1; }
-        .input-box { flex: 1; border: none; padding: 12px 16px; border-radius: 24px; outline: none; font-size: 15px; background-color: #fff; }
-        .action-btn { background: none; border: none; cursor: pointer; font-size: 22px; color: #54656f; }
-        .send-btn { background-color: #0084ff; color: white; border: none; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .send-svg { width: 18px; height: 18px; fill: white; transform: rotate(180deg); }
+        /* منطقة إدخال الرسائل السفلية الثابتة والمحكومة بقوة */
+        .input-area { 
+            background-color: #f0f2f5; 
+            padding: 8px; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            border-top: 1px solid #e1e1e1;
+            height: 50px;
+            min-height: 50px;
+            width: 100%;
+        }
+        .input-box { flex: 1; border: none; padding: 8px 14px; border-radius: 20px; outline: none; font-size: 14px; background-color: #fff; height: 34px; }
+        
+        /* 🎙️ شكل المايك وأزرار الميديا الاحترافية الدائرية الناعمة */
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: #54656f; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
+        .action-btn:hover { color: var(--primary); }
+        .mic-active { color: #d32f2f; animation: pulse 1.2s infinite; }
+
+        .send-btn { background-color: #0084ff; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .send-svg { width: 16px; height: 16px; fill: white; transform: rotate(180deg); }
         
         #file-loader { display: none; }
+        
+        /* تأثيرات الحركة والتحكم السلس */
         @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 768px) { .sidebar { position: absolute; right: 0; top: 0; bottom: 0; width: 240px; transform: translateX(100%); } .sidebar.open { transform: translateX(0); } .menu-toggle { display: block; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -95,7 +163,7 @@
     <div id="profile-screen" style="display: none;">
         <div class="profile-card">
             <h2>مرحباً بك في شات نبض ✨</h2>
-            <p style="font-size: 13px; color: #666;">اختر رمزك التعبيري واكتب اسمك للانضمام</p>
+            <p style="font-size: 12px; color: #666; margin-bottom: 10px;">اختر صورتك التعبيرية واكتب اسمك للانضمام</p>
             <div class="avatar-picker" id="avatar-picker-list"></div>
             <input type="text" class="profile-input" id="profile-name-input" placeholder="اكتب اسمك هنا...">
             <button class="profile-btn" id="save-profile-btn">دخول الشات</button>
@@ -127,10 +195,10 @@
 
         <div class="reply-preview-box" id="reply-preview">
             <div>
-                <span style="font-size: 11px; color:#0084ff; display:block;" id="reply-preview-user"></span>
-                <span id="reply-preview-text" style="color:#333;"></span>
+                <span style="font-size: 10px; color:#0084ff; display:block;" id="reply-preview-user"></span>
+                <span id="reply-preview-text" style="color:#333; font-size:12px;"></span>
             </div>
-            <button style="background:none; border:none; color:red; font-weight:bold; cursor:pointer;" id="cancel-reply-btn">✕</button>
+            <button style="background:none; border:none; color:red; font-weight:bold; cursor:pointer; padding:5px;" id="cancel-reply-btn">✕</button>
         </div>
 
         <div class="messages" id="chat-messages"></div>
@@ -138,7 +206,9 @@
         <div class="input-area">
             <input type="file" id="file-loader" accept="image/*,video/*">
             <button class="action-btn" id="attach-btn" title="صورة أو فيديو">📎</button>
+            
             <button class="action-btn" id="mic-btn" title="تسجيل صوتي">🎙️</button>
+            
             <input type="text" class="input-box" id="message-input" placeholder="اكتب رسالة...">
             <button class="send-btn" id="send-btn">
                 <svg class="send-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
@@ -164,7 +234,6 @@
     let selectedReplyText = "";
     let selectedReplySender = "";
 
-    // قائمة الأفاتارات الجاهزة المتاحة للمستخدمين
     const avatars = [
         "https://api.dicebear.com/7.x/bottts/svg?seed=Ahmad",
         "https://api.dicebear.com/7.x/avataaars/svg?seed=Faris",
@@ -175,12 +244,25 @@
     ];
     let selectedAvatarUrl = avatars[0];
 
-    // التحقق من الملف الشخصي
     let username = localStorage.getItem('chat_user_name');
     let userAvatar = localStorage.getItem('chat_user_avatar') || avatars[0];
 
     const profileScreen = document.getElementById('profile-screen');
     const pickerList = document.getElementById('avatar-picker-list');
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.getElementById('menu-btn');
+
+    // تشغيل وإغلاق القائمة الجانبية عبر الـ 3 شرط بشكل سليم ومستقر
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && e.target !== menuBtn) {
+            sidebar.classList.remove('open');
+        }
+    });
 
     if(!username) {
         profileScreen.style.display = "flex";
@@ -216,14 +298,12 @@
     const fileLoader = document.getElementById('file-loader');
     const replyPreview = document.getElementById('reply-preview');
 
-    document.getElementById('menu-btn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
-
     function loadRoomMessages(roomId) {
         if(unsubscribe) unsubscribe();
         chatMessages.innerHTML = "";
         
         unsubscribe = db.collection("rooms").doc(roomId).collection("messages")
-        .orderBy("timestamp", "asc").limit(70)
+        .orderBy("timestamp", "asc").limit(80)
         .onSnapshot((snapshot) => {
             chatMessages.innerHTML = "";
             snapshot.forEach((doc) => {
@@ -235,7 +315,6 @@
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
                 
-                // عرض صورة المستخدم الشخصية الحقيقية
                 const avatarImg = document.createElement('img');
                 avatarImg.className = "user-avatar";
                 avatarImg.src = data.avatarUrl || avatars[0];
@@ -248,7 +327,6 @@
                 nameSpan.innerText = data.sender;
                 bubble.appendChild(nameSpan);
                 
-                // إذا كانت الرسالة رداً على رسالة أخرى، اعرض الاقتباس
                 if(data.replyToText) {
                     const quoteDiv = document.createElement('div');
                     quoteDiv.className = "reply-quote";
@@ -279,23 +357,19 @@
                     bubble.appendChild(mediaDiv);
                 }
                 
-                // تذييل الفقاعة (التفاعلات، الوقت، سهم الرد)
                 const footer = document.createElement('div');
                 footer.className = "bubble-footer";
                 
                 const reactDiv = document.createElement('div');
                 reactDiv.className = "reactions";
-                
                 const likes = data.likes || 0;
                 const dislikes = data.dislikes || 0;
-                
                 reactDiv.innerHTML = `
                     <button class="react-btn" onclick="handleReact('${msgId}', 'like')">👍 <span>${likes}</span></button>
                     <button class="react-btn" onclick="handleReact('${msgId}', 'dislike')">👎 <span>${dislikes}</span></button>
                 `;
                 footer.appendChild(reactDiv);
                 
-                // زر سهم الرد السريع مرتبط بكل رسالة
                 const repBtn = document.createElement('button');
                 repBtn.className = "reply-trigger-btn";
                 repBtn.innerText = "↩️ رد";
@@ -320,7 +394,6 @@
         });
     }
 
-    // تفعيل عملية الرد
     function initiateReply(id, text, sender) {
         selectedReplyId = id;
         selectedReplyText = text;
@@ -336,7 +409,6 @@
         replyPreview.style.display = "none";
     });
 
-    // معالجة لايك وديسلايك وتخزين أن المستخدم تفاعل مرة واحدة فقط محلياً
     window.handleReact = function(msgId, type) {
         const key = `react_${msgId}`;
         if(localStorage.getItem(key)) return alert("لقد قمت بالتفاعل مع هذه الرسالة بالفعل!");
@@ -359,7 +431,7 @@
             e.currentTarget.classList.add('active');
             currentRoom = e.currentTarget.getAttribute('data-room');
             document.getElementById('current-room-title').innerText = e.currentTarget.innerText;
-            document.getElementById('sidebar').classList.remove('open');
+            sidebar.classList.remove('open');
             loadRoomMessages(currentRoom);
         });
     });
@@ -387,7 +459,6 @@
             msgData.replyToId = selectedReplyId;
             msgData.replyToText = selectedReplyText;
             msgData.replyToSender = selectedReplySender;
-            
             selectedReplyId = null;
             replyPreview.style.display = "none";
         }
@@ -405,7 +476,7 @@
         if(!file) return;
         const isVideo = file.type.startsWith('video/');
         messageInput.disabled = true;
-        messageInput.placeholder = "⏳ جاري المعالجة والرفع...";
+        messageInput.placeholder = "⏳ جاري الرفع...";
         
         const reader = new FileReader();
         reader.readAsDataURL(file);
