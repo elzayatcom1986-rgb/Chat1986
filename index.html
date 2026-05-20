@@ -22,12 +22,14 @@
         .header { background-color: var(--primary); color: white; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 50px; min-height: 50px; z-index: 100; }
         .header-title { font-size: 16px; font-weight: bold; }
         
-        /* شريط التبويبات العلوي الاحترافي */
-        .top-nav-tabs { background: var(--primary); display: flex; width: 100%; height: 48px; min-height: 48px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); }
-        .tab-btn { flex: 1; background: none; border: none; color: #b3d4d0; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s; position: relative; }
+        /* 🔔 شريط التبويبات العلوي الاحترافي بعد التعديل الشامل والترتيب */
+        .top-nav-tabs { background: var(--primary); display: flex; width: 100%; height: 54px; min-height: 54px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn { flex: 1; background: none; border: none; color: #b3d4d0; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; position: relative; padding: 4px 0; }
         .tab-btn.active { color: white; }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 3.5px; background: white; border-radius: 3px 3px 0 0; }
-        .tab-badge { position: absolute; top: 4px; right: 18%; background: #ff3b30; color: white; font-size: 10px; padding: 1px 5px; border-radius: 10px; font-weight: bold; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 3.5px; background: white; border-radius: 3px 3px 0 0; }
+        
+        /* ضبط موقع البادج فوق أيقونة الإشعارات بالملي */
+        .tab-badge { position: absolute; top: 4px; right: 28%; background: #ff3b30; color: white; font-size: 10px; padding: 1px 5px; border-radius: 10px; font-weight: bold; min-width: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 
         /* الشريط المتحرك الترحيبي */
         .moving-ticker { background: linear-gradient(90deg, #054d44, #1fa855); color: #ffffff; font-size: 12px; font-weight: bold; padding: 6px 0; overflow: hidden; white-space: nowrap; min-height: 30px; display: flex; align-items: center; }
@@ -51,12 +53,12 @@
         .section-main-title { font-size: 15px; color: var(--primary-dark); font-weight: bold; border-right: 4px solid var(--primary); padding-right: 8px; }
         .mini-action-btn { background: var(--accent-blue); color: white; border: none; padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* 👥 تطوير وتكبير نظام غرفتين في كل صف وتنسيقها بالملي */
+        /* 👥 تطوير وتكبير وتنسيق مربعات الغرف لتكون فخمة وموحدة */
         .rooms-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .room-card-square { background: white; height: 75px; padding: 0 16px; border-radius: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border-right: 5px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s, transform 0.15s; }
+        .room-card-square { background: white; height: 90px; padding: 0 16px; border-radius: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border-right: 5px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s, transform 0.15s; }
         .room-card-square:active { transform: scale(0.97); background: #fafafa; }
-        .room-square-name { font-size: 14px; font-weight: 700; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .room-square-arrow { color: #b3b3b3; font-size: 14px; }
+        .room-square-name { font-size: 15px; font-weight: 700; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .room-square-arrow { color: #b3b3b3; font-size: 15px; }
 
         /* صندوق المجموعات السرية */
         .secret-search-box { background: white; padding: 14px; border-radius: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; gap: 10px; margin-top: 8px; }
@@ -120,15 +122,15 @@
         .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
         .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 10px; color: #777; }
 
-        /* 🛠️ شريط الإرسال السفلي المطور بالملي طبقاً للصور الاحترافية المقترحة */
-        .input-row-wa { display: flex; align-items: center; padding: 8px 10px; gap: 8px; background: rgba(239, 231, 221, 0.9); border-top: 1px solid rgba(0,0,0,0.05); }
-        .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 24px; padding: 2px 14px; gap: 10px; min-height: 44px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
-        .wa-icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #66767d; transition: color 0.2s; padding: 2px; display: flex; align-items: center; justify-content: center; }
+        /* 🛠️ تنظيف وتنسيق شريط الإرسال السفلي بالملي لمنع التضخم واختلاف المقاسات */
+        .input-row-wa { display: flex; align-items: center; padding: 6px 10px; gap: 8px; background: rgba(239, 231, 221, 0.95); border-top: 1px solid rgba(0,0,0,0.05); height: 56px; min-height: 56px; max-height: 56px; box-sizing: border-box; }
+        .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 24px; padding: 0 12px; gap: 8px; height: 42px; min-height: 42px; max-height: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); box-sizing: border-box; overflow: hidden; }
+        .wa-icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #66767d; transition: color 0.15s; padding: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .wa-icon-btn:active { color: var(--primary); }
-        .input-box { flex: 1; border: none; outline: none; font-size: 14.5px; background: transparent; padding: 6px 0; }
+        .input-box { flex: 1; border: none; outline: none; font-size: 14px; background: transparent; padding: 4px 0; height: 100%; box-sizing: border-box; }
         
-        /* أزرار مدمجة دائرياً ومعزولة للإرسال والمايك النشط */
-        .action-circle-btn-wa { width: 44px; height: 44px; background-color: var(--primary); border: none; border-radius: 50%; color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
+        /* ضبط حجم زر المايك والإرسال الدائري بشكل احترافي وثابت */
+        .action-circle-btn-wa { width: 42px; height: 42px; background-color: var(--primary); border: none; border-radius: 50%; color: white; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: background 0.2s; box-sizing: border-box; }
         .action-circle-btn-wa:active { background-color: var(--primary-dark); }
         .mic-active-wa { background-color: #d32f2f !important; }
 
@@ -153,9 +155,13 @@
 
     <div class="top-nav-tabs">
         <button class="tab-btn active" onclick="switchMainTab('page-home', this)">🏠 <span>الدردشات</span></button>
-        <button class="tab-btn" onclick="switchMainTab('page-secret-groups', this)">👥 <span>مجموعاتي</span></button>
         <button class="tab-btn" onclick="switchMainTab('page-forum', this)">✨ <span>المنتدى</span></button>
-        <button class="tab-btn" onclick="switchMainTab('page-my-account', this)">⚙️ <span>حسابي</span><span class="tab-badge" id="noti-badge-count" style="display:none;">0</span></button>
+        <button class="tab-btn" onclick="switchMainTab('page-secret-groups', this)">👥 <span>مجموعاتي</span></button>
+        <button class="tab-btn" onclick="switchMainTab('page-my-account', this)">
+            🔔 <span>الإشعارات</span>
+            <span class="tab-badge" id="noti-badge-count" style="display:none;">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchMainTab('page-profile-settings', this)">⚙️ <span>حسابي</span></button>
     </div>
 
     <div class="moving-ticker" id="appTicker">
@@ -238,6 +244,13 @@
         </div>
 
         <div class="app-page" id="page-my-account">
+            <div class="section-title-row">
+                <div class="section-main-title">🔔 مركز الإشعارات والرسائل الخاصة الموحد</div>
+            </div>
+            <div class="notifications-list" id="app-notifications-box"></div>
+        </div>
+
+        <div class="app-page" id="page-profile-settings">
             <div class="profile-setup-box">
                 <label class="profile-uploader-label">
                     <img class="profile-main-avatar" id="my-profile-avatar-tag" src="https://www.w3schools.com/howto/img_avatar.png">
@@ -270,11 +283,6 @@
                 </div>
                 <button class="mini-action-btn" style="width:100%; padding:8px; border-radius:8px;" onclick="saveProfileDataEngine()">حفظ تعديلات البيانات 💾</button>
             </div>
-
-            <div class="section-title-row" style="margin-top:20px;">
-                <div class="section-main-title">🔔 مركز الإشعارات والرسائل الخاصة الموحد</div>
-            </div>
-            <div class="notifications-list" id="app-notifications-box"></div>
         </div>
 
     </div>
@@ -338,7 +346,7 @@
     let attachedForumPhotoBase64 = "";
 
     let currentUsername = localStorage.getItem('chat_user_name') || "";
-    let userAge = localStorage.getItem('chat_user_age') || "غير مححدد";
+    let userAge = localStorage.getItem('chat_user_age') || "غير محدد";
     let userGender = localStorage.getItem('chat_user_gender') || "ذكر";
     let userStatus = localStorage.getItem('chat_user_status') || "أعزب";
     let userAvatar = localStorage.getItem('chat_user_avatar') || "https://www.w3schools.com/howto/img_avatar.png";
@@ -719,7 +727,7 @@
                 footer.className = "bubble-footer";
                 
                 const leftActions = document.createElement('div');
-                leftActions.style.display = "flex"; gap = "10px";
+                leftActions.style.display = "flex"; leftActions.style.gap = "10px";
                 
                 const replyBtn = document.createElement('button');
                 replyBtn.style = "background:none; border:none; cursor:pointer;"; replyBtn.innerText = "↩️";
