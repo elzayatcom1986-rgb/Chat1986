@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض العرب - المنصة المطورة</title>
+    <title>شات نبض العرب - النسخة الاحترافية المثالية</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
@@ -22,112 +22,116 @@
         .header { background-color: var(--primary); color: white; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 50px; min-height: 50px; z-index: 100; }
         .header-title { font-size: 16px; font-weight: bold; }
         
-        /* شريط التبويبات العلوي الذكي الاحترافي */
-        .top-nav-tabs { background: var(--primary); display: flex; width: 100%; height: 45px; min-height: 45px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); }
+        /* شريط التبويبات العلوي الاحترافي */
+        .top-nav-tabs { background: var(--primary); display: flex; width: 100%; height: 48px; min-height: 48px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.1); }
         .tab-btn { flex: 1; background: none; border: none; color: #b3d4d0; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: all 0.2s; position: relative; }
         .tab-btn.active { color: white; }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 3px; background: white; border-radius: 3px 3px 0 0; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 3.5px; background: white; border-radius: 3px 3px 0 0; }
         .tab-badge { position: absolute; top: 4px; right: 18%; background: #ff3b30; color: white; font-size: 10px; padding: 1px 5px; border-radius: 10px; font-weight: bold; }
 
         /* الشريط المتحرك الترحيبي */
-        .moving-ticker { background: linear-gradient(90deg, #054d44, #1fa855); color: #ffffff; font-size: 12px; font-weight: bold; padding: 5px 0; overflow: hidden; white-space: nowrap; min-height: 28px; display: flex; align-items: center; }
+        .moving-ticker { background: linear-gradient(90deg, #054d44, #1fa855); color: #ffffff; font-size: 12px; font-weight: bold; padding: 6px 0; overflow: hidden; white-space: nowrap; min-height: 30px; display: flex; align-items: center; }
         
         /* الحاوية الرئيسية للصفحات */
         .page-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .app-page { position: absolute; inset: 0; display: none; flex-direction: column; background: #f0f2f5; overflow-y: auto; padding: 14px; }
         .app-page.active { display: flex; }
 
-        /* مشغل الاذاعة الخلفي السفلي للهيدر */
+        /* مشغل الاذاعة */
         .live-audio-player-bar { background: #222; color: white; padding: 8px 14px; display: none; align-items: center; justify-content: space-between; font-size: 12px; }
 
-        /* كروت تشغيل الميديا الأصلية الفخمة */
-        .media-original-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .media-original-card { flex: 1; background: white; padding: 14px; border-radius: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); cursor: pointer; display: flex; align-items: center; gap: 10px; border-right: 4px solid var(--accent-blue); }
-        .media-original-icon { font-size: 22px; }
-        .media-original-text { font-size: 13px; font-weight: bold; color: #222; }
+        /* كروت تشغيل الميديا */
+        .media-original-row { display: flex; gap: 12px; margin-bottom: 16px; }
+        .media-original-card { flex: 1; background: white; padding: 16px; border-radius: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); cursor: pointer; display: flex; align-items: center; gap: 12px; border-right: 4px solid var(--accent-blue); transition: transform 0.15s; }
+        .media-original-card:active { transform: scale(0.98); }
+        .media-original-icon { font-size: 24px; }
+        .media-original-text { font-size: 14px; font-weight: bold; color: #222; }
 
-        .section-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; margin-top: 5px; }
-        .section-main-title { font-size: 14px; color: var(--primary-dark); font-weight: bold; border-right: 3px solid var(--primary); padding-right: 6px; }
-        .mini-action-btn { background: var(--accent-blue); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .section-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; margin-top: 5px; }
+        .section-main-title { font-size: 15px; color: var(--primary-dark); font-weight: bold; border-right: 4px solid var(--primary); padding-right: 8px; }
+        .mini-action-btn { background: var(--accent-blue); color: white; border: none; padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* 👥 نظام غرفتين في كل صف (Grid Layout المتناسق) */
-        .rooms-grid-layout { display: grid; grid-template-columns: repeat(2, 12fr); gap: 10px; margin-bottom: 20px; }
-        .room-card-square { background: white; padding: 16px 12px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); cursor: pointer; border-right: 4px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; }
-        .room-square-name { font-size: 13px; font-weight: bold; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .room-square-arrow { color: #ccc; font-size: 13px; }
+        /* 👥 تطوير وتكبير نظام غرفتين في كل صف وتنسيقها بالملي */
+        .rooms-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .room-card-square { background: white; height: 75px; padding: 0 16px; border-radius: 14px; box-shadow: 0 3px 8px rgba(0,0,0,0.05); cursor: pointer; border-right: 5px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s, transform 0.15s; }
+        .room-card-square:active { transform: scale(0.97); background: #fafafa; }
+        .room-square-name { font-size: 14px; font-weight: 700; color: #222; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .room-square-arrow { color: #b3b3b3; font-size: 14px; }
 
         /* صندوق المجموعات السرية */
-        .secret-search-box { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); display: flex; gap: 8px; margin-top: 8px; }
-        .secret-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 12px; text-align: center; }
+        .secret-search-box { background: white; padding: 14px; border-radius: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; gap: 10px; margin-top: 8px; }
+        .secret-input { flex: 1; border: 1px solid #ddd; padding: 10px 14px; border-radius: 24px; outline: none; font-size: 13px; text-align: center; }
 
-        /* ✨ منتدى المنشورات والحالات الاحترافي */
-        .forum-composer { background: white; padding: 12px; border-radius: 14px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
-        .composer-textarea { width: 100%; min-height: 50px; max-height: 100px; border: none; outline: none; font-size: 13px; resize: none; padding: 4px; }
-        .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0; padding-top: 8px; }
+        /* ✨ منتدى المنشورات والحالات المتكامل */
+        .forum-composer { background: white; padding: 14px; border-radius: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .composer-textarea { width: 100%; min-height: 60px; max-height: 120px; border: none; outline: none; font-size: 14px; resize: none; padding: 4px; }
+        .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0; padding-top: 10px; }
         
-        .forum-post-card { background: white; border-radius: 14px; padding: 14px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .post-header { display: flex; align-items: center; gap: 10px; }
-        .post-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; background: #eee; border: 1px solid #ddd; }
+        .forum-post-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .post-header { display: flex; align-items: center; gap: 12px; }
+        .post-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; background: #eee; border: 1px solid #ddd; }
         .post-meta-info { display: flex; flex-direction: column; }
-        .post-user-name { font-size: 13px; font-weight: bold; color: #222; }
-        .post-user-badges { font-size: 10px; color: #666; display: flex; gap: 6px; margin-top: 1px; }
-        .post-text { font-size: 13.5px; color: #333; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-        .post-attached-img { max-width: 100%; max-height: 220px; border-radius: 8px; object-fit: cover; margin-top: 4px; border: 1px solid #f0f0f0; }
+        .post-user-name { font-size: 14px; font-weight: bold; color: #222; }
+        .post-user-badges { font-size: 11px; color: #777; display: flex; gap: 6px; margin-top: 2px; }
+        .post-text { font-size: 14px; color: #333; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+        .post-attached-img { max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: cover; margin-top: 4px; border: 1px solid #f0f0f0; }
         
-        .post-interactions { display: flex; gap: 16px; border-top: 1px solid #f5f5f5; padding-top: 8px; margin-top: 4px; }
-        .interact-btn { background: none; border: none; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        /* إضافة تفاعل المشاركة */
+        .post-interactions { display: flex; gap: 20px; border-top: 1px solid #f5f5f5; padding-top: 10px; margin-top: 4px; }
+        .interact-btn { background: none; border: none; font-size: 13px; font-weight: bold; color: #555; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         .interact-btn.liked { color: #d32f2f; }
         
-        /* صندوق التعليقات المنسدل المدمج الناعم */
-        .post-comments-section { background: #f9f9f9; border-radius: 8px; padding: 8px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
-        .single-comment-row { background: white; padding: 6px 10px; border-radius: 6px; border-right: 2px solid #ccc; }
-        .comment-input-row { display: flex; gap: 6px; margin-top: 4px; }
-        .comment-mini-input { flex: 1; border: 1px solid #ddd; padding: 6px 10px; border-radius: 15px; outline: none; font-size: 11px; }
+        /* صندوق التعليقات المدمج */
+        .post-comments-section { background: #f9f9f9; border-radius: 10px; padding: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+        .single-comment-row { background: white; padding: 8px 12px; border-radius: 8px; border-right: 3px solid #ccc; }
+        .comment-input-row { display: flex; gap: 8px; margin-top: 6px; }
+        .comment-mini-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 18px; outline: none; font-size: 12px; }
 
-        /* ⚙️ شاشة حسابي الشخصي المطورة */
-        .profile-setup-box { background: white; padding: 20px; border-radius: 14px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        /* ⚙️ شاشة حسابي الشخصي */
+        .profile-setup-box { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
         .profile-uploader-label { position: relative; cursor: pointer; }
-        .profile-main-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; background: #eee; border: 2px solid var(--primary); }
-        .avatar-edit-icon { position: absolute; bottom: 0; right: 4px; background: var(--whatsapp-green); color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid white; }
-        .profile-grid-fields { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; text-align: right; }
+        .profile-main-avatar { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; background: #eee; border: 2px solid var(--primary); }
+        .avatar-edit-icon { position: absolute; bottom: 2px; right: 4px; background: var(--whatsapp-green); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; border: 2px solid white; }
+        .profile-grid-fields { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: right; }
         .field-block { display: flex; flex-direction: column; gap: 4px; }
-        .field-block label { font-size: 11px; font-weight: bold; color: #666; }
-        .field-select, .field-input-text { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-size: 12px; background: #fafafa; }
+        .field-block label { font-size: 12px; font-weight: bold; color: #555; }
+        .field-select, .field-input-text { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; outline: none; font-size: 13px; background: #fafafa; }
         
         /* قائمة الإشعارات */
         .notifications-list { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px; }
-        .notify-item-card { background: #fff; padding: 10px 12px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); font-size: 12px; display: flex; justify-content: space-between; align-items: center; border-right: 3px solid #ff9500; }
+        .notify-item-card { background: #fff; padding: 12px; border-radius: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.04); font-size: 13px; display: flex; justify-content: space-between; align-items: center; border-right: 4px solid #ff9500; }
 
-        /* 💬 منطقة شاشة الدردشة والمحادثة الكاملة المفتوحة */
+        /* 💬 شاشة الدردشة والمحادثة الكاملة */
         .chat-view-container { position: absolute; inset: 0; display: none; flex-direction: column; background-color: var(--bg-chat); background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); z-index: 500; }
         .chat-view-container.active { display: flex; }
-        .chat-subheader { background: rgba(255, 255, 255, 0.95); padding: 8px 14px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); height: 45px; }
-        .messages-area { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-subheader { background: rgba(255, 255, 255, 0.95); padding: 0 14px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); height: 50px; min-height: 50px; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* تصميم كبسولة الرسائل المتطور والمحاذاة */
-        .msg-wrapper { display: flex; align-items: flex-end; gap: 6px; max-width: 85%; }
+        /* كبسولة الرسائل */
+        .msg-wrapper { display: flex; align-items: flex-end; gap: 8px; max-width: 85%; }
         .msg-wrapper.me { align-self: flex-start; }
         .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
-        .msg-user-img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #ddd; }
+        .msg-user-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: #ddd; }
         
-        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 13.5px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 140px; position: relative; }
-        .sender-name { font-size: 11px; font-weight: bold; color: var(--primary-dark); margin-bottom: 3px; cursor: pointer; }
-        .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid var(--accent-blue); padding: 4px 6px; font-size: 11px; color: #555; border-radius: 4px; margin-bottom: 5px; }
-        .custom-voice-bubble { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.03); padding: 5px 10px; border-radius: 20px; margin-top: 4px; }
-        .voice-play-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; }
-        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; font-size: 10px; color: #777; }
+        .bubble { padding: 10px 14px; border-radius: 14px; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 150px; position: relative; }
+        .sender-name { font-size: 12px; font-weight: bold; color: var(--primary-dark); margin-bottom: 4px; cursor: pointer; }
+        .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid var(--accent-blue); padding: 5px 8px; font-size: 12px; color: #555; border-radius: 6px; margin-bottom: 6px; }
+        .custom-voice-bubble { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.03); padding: 6px 12px; border-radius: 20px; margin-top: 4px; }
+        .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 10px; color: #777; }
 
-        /* 🛠️ تصميم شريط الإرسال الاحترافي الفخم المعزول (Premium Input UI) */
-        .input-row-wa { display: flex; align-items: center; padding: 8px 10px; gap: 8px; background: transparent; width: 100%; background: rgba(239, 231, 221, 0.5); }
-        .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 24px; padding: 2px 12px; gap: 8px; min-height: 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .wa-icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #66767d; padding: 2px; }
-        .input-box { flex: 1; border: none; outline: none; font-size: 14px; background: transparent; padding: 4px 0; }
+        /* 🛠️ شريط الإرسال السفلي المطور بالملي طبقاً للصور الاحترافية المقترحة */
+        .input-row-wa { display: flex; align-items: center; padding: 8px 10px; gap: 8px; background: rgba(239, 231, 221, 0.9); border-top: 1px solid rgba(0,0,0,0.05); }
+        .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 24px; padding: 2px 14px; gap: 10px; min-height: 44px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); }
+        .wa-icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #66767d; transition: color 0.2s; padding: 2px; display: flex; align-items: center; justify-content: center; }
+        .wa-icon-btn:active { color: var(--primary); }
+        .input-box { flex: 1; border: none; outline: none; font-size: 14.5px; background: transparent; padding: 6px 0; }
         
-        /* كبسولة المايك الدائرية المعزولة تماماً */
-        .mic-btn-wa { width: 42px; height: 42px; background-color: var(--whatsapp-green); border: none; border-radius: 50%; color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.15); transition: background 0.2s; }
+        /* أزرار مدمجة دائرياً ومعزولة للإرسال والمايك النشط */
+        .action-circle-btn-wa { width: 44px; height: 44px; background-color: var(--primary); border: none; border-radius: 50%; color: white; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
+        .action-circle-btn-wa:active { background-color: var(--primary-dark); }
         .mic-active-wa { background-color: #d32f2f !important; }
 
-        /* الإخفاء الافتراضي لشاشات التسجيل المودال الأولي */
         .modal-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         #file-loader-cam, #file-loader-clip, #forum-file-loader { display: none; }
     </style>
@@ -292,16 +296,22 @@
             <div class="input-bar-wa">
                 <input type="file" id="file-loader-cam" accept="image/*,video/*">
                 <input type="file" id="file-loader-clip" accept="audio/*">
-                <button class="wa-icon-btn" onclick="document.getElementById('file-loader-clip').click()">📎</button>
+                
+                <button class="wa-icon-btn" onclick="document.getElementById('file-loader-clip').click()">➕</button>
+                
+                <input type="text" class="input-box" id="chat-message-input" placeholder="اكتب رسالة..." oninput="handleInputChangeUI(this)">
+                
+                <button class="wa-icon-btn" onclick="insertQuickEmoji('😊')">😊</button>
+                
                 <button class="wa-icon-btn" onclick="document.getElementById('file-loader-cam').click()">📷</button>
-                <input type="text" class="input-box" id="chat-message-input" placeholder="اكتب رسالة...">
             </div>
-            <button class="mic-btn-wa" id="mic-submit-btn">▼</button>
+            
+            <button class="action-circle-btn-wa" id="mic-submit-btn">🎙️</button>
         </div>
     </div>
 
 <script>
-    // تهيئة Firebase والاتصال بـ Firestore
+    // تهيئة Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyDE_X_H_88wzE_N6n_Yh155364355450",
         authDomain: "chat1986-552fe.firebaseapp.com",
@@ -313,7 +323,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // متغيرات الحالة العامة للتطبيق
+    // متغيرات الحالة
     let currentRoomId = "room1";
     let isPrivateChat = false;
     let isGroupChat = false;
@@ -327,9 +337,8 @@
     let isRecordingAudio = false;
     let attachedForumPhotoBase64 = "";
 
-    // بيانات المستخدم المحفوظة في العميل المحلي
     let currentUsername = localStorage.getItem('chat_user_name') || "";
-    let userAge = localStorage.getItem('chat_user_age') || "غير محدد";
+    let userAge = localStorage.getItem('chat_user_age') || "غير مححدد";
     let userGender = localStorage.getItem('chat_user_gender') || "ذكر";
     let userStatus = localStorage.getItem('chat_user_status') || "أعزب";
     let userAvatar = localStorage.getItem('chat_user_avatar') || "https://www.w3schools.com/howto/img_avatar.png";
@@ -338,7 +347,6 @@
     const chatMessageInput = document.getElementById('chat-message-input');
     const micSubmitBtn = document.getElementById('mic-submit-btn');
 
-    // التحقق الفوري من وجود اسم مستعار عند التشغيل
     if(!currentUsername) {
         document.getElementById('profile-screen').style.display = "flex";
     } else {
@@ -366,7 +374,21 @@
         loadForumFeedEngine();
     }
 
-    // التنقل الاحترافي الذكي بين التبويبات العلوية الأربعة
+    // إدارة تحويل زرار الإرسال/المايك تلقائياً عند الكتابة
+    window.handleInputChangeUI = function(input) {
+        if(input.value.trim() !== "") {
+            micSubmitBtn.innerHTML = "🚀";
+        } else {
+            micSubmitBtn.innerHTML = "🎙️";
+        }
+    };
+
+    window.insertQuickEmoji = function(emoji) {
+        chatMessageInput.value += emoji;
+        handleInputChangeUI(chatMessageInput);
+        chatMessageInput.focus();
+    };
+
     window.switchMainTab = function(pageId, btn) {
         document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
@@ -374,7 +396,6 @@
         btn.classList.add('active');
     };
 
-    // فتح وإغلاق الشاشة العائمة للمحادثات النشطة
     window.enterRoom = function(roomId, roomTitle, isGroup = false) {
         isPrivateChat = false;
         isGroupChat = isGroup;
@@ -398,7 +419,6 @@
         if(chatUnsubscribe) chatUnsubscribe();
     };
 
-    // إدارة مشغل ميديا إذاعات البث المباشر المدمج
     window.startLiveAudioEngine = function(url, title) {
         if(audioLiveStream) { audioLiveStream.pause(); audioLiveStream = null; }
         audioLiveStream = new Audio(url);
@@ -414,7 +434,6 @@
         document.getElementById('live-media-bar').style.display = "none";
     };
 
-    // 🔒 إدارة وإنشاء المجموعات السرية المحمية بباسورد
     window.triggerCreatePrivateGroup = function() {
         const groupName = prompt("أدخل اسم المجموعة السرية الجديدة:");
         if(!groupName) return;
@@ -425,7 +444,7 @@
         db.collection("custom_groups").doc(generatedId).set({
             name: groupName, password: password, groupId: generatedId, createdBy: currentUsername, timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
-            alert(`🎉 تم إنشاء المجموعة بنجاح وأصبحت مخفية!\n🆔 رقم معرّف المجموعة (ID) هو: ${generatedId}\nانسخه وقم بإرساله لأصدقائك الـ 10 للبحث به.`);
+            alert(`🎉 تم إنشاء المجموعة بنجاح وأصبحت مخفية!\n🆔 رقم معرّف المجموعة (ID) هو: ${generatedId}`);
         });
     };
 
@@ -445,7 +464,6 @@
         });
     };
 
-    // ⚙️ إدارة تحديث بيانات البروفايل والصور الشخصية الحقيقية (Base64)
     window.updateProfilePhotoEngine = function(input) {
         const file = input.files[0];
         if(!file) return;
@@ -471,7 +489,7 @@
         alert("🎉 تم حفظ جميع بيانات ملفك الشخصي بنجاح وتحديثها في المنصة!");
     };
 
-    // ✨ إدارة منتدى الحالات والمنشورات والتعليقات والإعجابات
+    // إرفاق صور الحالات والمنشورات
     document.getElementById('forum-file-loader').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if(!file) return;
@@ -509,6 +527,17 @@
         });
     };
 
+    // ميزة مشاركة البوست أو نسخ محتواه بنقرة واحدة
+    window.shareForumPostAction = function(text, media) {
+        let textToShare = text || "صورة من منتدى نبض العرب 📊";
+        if(navigator.clipboard) {
+            navigator.clipboard.writeText(textToShare);
+            alert("📋 تم نسخ نص الحالة/المنشور بنجاح! يمكنك الآن لصقها ومشاركتها في أي غرفة شات.");
+        } else {
+            alert(`نص المنشور هو:\n${textToShare}`);
+        }
+    };
+
     function loadForumFeedEngine() {
         db.collection("forum_posts").orderBy("timestamp", "desc").onSnapshot(snap => {
             const container = document.getElementById('forum-feed-container');
@@ -542,6 +571,7 @@
                     <div class="post-interactions">
                         <button class="interact-btn ${hasLiked?'liked':''}" onclick="toggleForumLike('${postId}', ${JSON.stringify(likes)}, ${hasLiked})">👍 <span>${likes.length}</span> إعجاب</button>
                         <button class="interact-btn" onclick="document.getElementById('comment-box-${postId}').style.display='flex'">💬 <span>${comments.length}</span> تعليق</button>
+                        <button class="interact-btn" onclick="shareForumPostAction(${JSON.stringify(data.text)}, '${data.mediaUrl||''}')">↩️ مشاركة</button>
                     </div>
                     <div class="post-comments-section" id="comment-box-${postId}" style="display:none;">
                         <div id="comments-list-${postId}">${commentsHtml}</div>
@@ -571,7 +601,6 @@
         db.collection("forum_posts").doc(postId).update({ comments: updated }).then(() => { input.value = ""; });
     };
 
-    // 🔔 مراقبة مركز الإشعارات والرسائل الخاصة النشطة الموحدة
     function listenToNotificationsEngine() {
         db.collection("private_chats").where("recipient", "==", currentUsername).where("isRead", "==", false)
         .onSnapshot(snap => {
@@ -600,7 +629,6 @@
         });
     }
 
-    // 💬 محرك تحميل المحادثات التفاعلي داخل شاشات الغرف والخاص
     window.initiateReplyQuote = function(sender, text) {
         selectedReplySender = sender; selectedReplyText = text;
         document.getElementById('reply-preview-text').innerText = `رد على ${sender}: ${text.substring(0, 20)}...`;
@@ -758,11 +786,19 @@
             db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
         }
         chatMessageInput.value = '';
+        handleInputChangeUI(chatMessageInput);
         cancelReplyQuote();
     }
 
-    // إدارة أحداث شريط الإدخال ومفتاح الإدخال والمايك الاحترافي المعزول
-    micSubmitBtn.addEventListener('click', () => { if(chatMessageInput.value.trim() !== "") { processMessageSend(); } else { toggleVoiceRecordingEngine(); } });
+    // إدارة نقرة الزرار الدائري (إرسال إذا كان فيه نص، أو تسجيل صوتي إذا كان فاضي)
+    micSubmitBtn.addEventListener('click', () => { 
+        if(chatMessageInput.value.trim() !== "") { 
+            processMessageSend(); 
+        } else { 
+            toggleVoiceRecordingEngine(); 
+        } 
+    });
+    
     chatMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processMessageSend(); });
 
     function handleFileUpload(file, type) {
