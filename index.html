@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شات نبض العرب - الماس الذهبي</title>
+    <title>شات نبض العرب - الماس الذهبي المطور</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
@@ -32,31 +32,33 @@
         .app-page.active { display: flex; }
 
         /* الواجهة الرئيسية */
-        .home-dashboard { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 15px; }
-        .section-title { font-size: 14px; color: var(--primary-dark); font-weight: bold; border-right: 4px solid var(--primary); padding-right: 8px; margin-bottom: 5px; }
+        .home-dashboard { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; }
+        .section-title { font-size: 14px; color: var(--primary-dark); font-weight: bold; border-right: 4px solid var(--primary); padding-right: 8px; }
         
-        /* هيدر قسم الغرف لوضع الأزرار متناسقة */
-        .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-        .mini-action-btn { background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .section-header-row { display: flex; align-items: center; justify-content: space-between; }
+        .mini-action-btn { background: #007bff; color: white; border: none; padding: 6px 14px; border-radius: 15px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* كروت الميديا المصغرة مدمجة جداً */
-        .media-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .media-card { background: white; padding: 10px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #e3e3e3; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .media-icon { font-size: 18px; }
-        .media-name { font-size: 12px; font-weight: bold; color: #333; }
+        /* تصميم صف الميديا الأنيق: الأيقونة وتحتها النص مباشرة بدون العنوان الكبير */
+        .media-clean-row { display: flex; justify-content: center; gap: 40px; padding: 10px 0 5px 0; }
+        .media-clean-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .media-clean-circle { background: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 3px 8px rgba(0,0,0,0.08); border: 1px solid #e3e3e3; transition: transform 0.2s; }
+        .media-clean-item:active .media-clean-circle { transform: scale(0.9); }
+        .media-clean-label { font-size: 12px; font-weight: bold; color: #444; }
 
         .live-audio-player-bar { background: #222; color: white; padding: 10px 16px; display: none; align-items: center; justify-content: space-between; font-size: 13px; }
 
-        /* شبكة الغرف */
-        .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .room-card { background: white; padding: 14px 10px; border-radius: 12px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); cursor: pointer; border-bottom: 3px solid var(--whatsapp-green); }
-        .room-card-name { font-size: 12px; font-weight: bold; color: #222; }
+        /* أيقونات الدردشة الغرف العامة الكبيرة والممتازة */
+        .rooms-list-vertical { display: flex; flex-direction: column; gap: 12px; }
+        .room-card-large { background: white; padding: 18px 16px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; border-right: 5px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }
+        .room-card-large:active { background: #f7f7f7; }
+        .room-large-name { font-size: 15px; font-weight: bold; color: #222; }
+        .room-large-arrow { color: #aaa; font-size: 16px; }
 
         /* صندوق البحث السري عن المجموعات */
-        .secret-search-box { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; gap: 8px; margin-top: 5px; }
+        .secret-search-box { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; gap: 8px; }
         .secret-input { flex: 1; border: 1px solid #ccc; padding: 8px 12px; border-radius: 20px; outline: none; font-size: 12px; text-align: center; }
 
-        /* منطقة الدردشة الكاملة بدون فراغات */
+        /* منطقة الدردشة الكاملة */
         .chat-view-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; background-color: var(--bg-chat); background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); }
         .chat-subheader { background: rgba(255, 255, 255, 0.9); padding: 8px 14px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .back-to-home-btn { background: var(--primary-dark); color: white; border: none; padding: 5px 12px; border-radius: 15px; font-size: 11px; cursor: pointer; }
@@ -71,7 +73,7 @@
         
         .reply-quote { background: rgba(0,0,0,0.05); border-right: 3px solid #007bff; padding: 4px 6px; font-size: 11px; color: #555; border-radius: 4px; margin-bottom: 5px; }
 
-        /* مشغل البصمة الصوتية المخصص الناعم والجميل جداً */
+        /* مشغل البصمة الصوتية المخصص الناعم */
         .custom-voice-bubble { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.04); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 150px; }
         .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; }
 
@@ -79,7 +81,7 @@
         .action-btn { background: none; border: none; cursor: pointer; font-size: 11px; color: #66767d; }
         .action-btn.liked { color: #d32f2f; font-weight: bold; }
 
-        /* شريط الإدخال الملتصق بالأسفل تماماً وبدون أي عيوب */
+        /* شريط الإدخال الملتصق بالأسفل تماماً */
         .input-row-wa { display: flex; align-items: center; padding: 6px 10px; gap: 8px; background: transparent; width: 100%; position: relative; z-index: 10; }
         .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 25px; padding: 2px 14px; gap: 10px; min-height: 44px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .input-box { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; }
@@ -125,34 +127,52 @@
         <div class="app-page active" id="page-home">
             <div class="home-dashboard">
                 
-                <div class="section-title">⭐ قنوات وإذاعات الميديا الصوتية (بث حي دائم)</div>
-                <div class="media-grid">
-                    <div class="media-card" onclick="startLiveAudioEngine('https://qurango.net/radio/tarfeeh', '🕋 إذاعة القرآن الكريم المباشرة')">
-                        <span class="media-icon">🕋</span>
-                        <span class="media-name">إذاعة القرآن</span>
+                <div class="media-clean-row">
+                    <div class="media-clean-item" onclick="startLiveAudioEngine('https://qurango.net/radio/tarfeeh', '🕋 إذاعة القرآن الكريم المباشرة')">
+                        <div class="media-clean-circle">🕋</div>
+                        <span class="media-clean-label">إذاعة القرآن</span>
                     </div>
-                    <div class="media-card" onclick="startLiveAudioEngine('https://stream.zeno.fm/f93863897v8uv', '🎵 راديو الموسيقى الكلاسيكية الهادئة')">
-                        <span class="media-icon">🎵</span>
-                        <span class="media-name">موسيقى هادئة</span>
+                    <div class="media-clean-item" onclick="startLiveAudioEngine('https://stream.zeno.fm/f93863897v8uv', '🎵 راديو الموسيقى الكلاسيكية الهادئة')">
+                        <div class="media-clean-circle">🎵</div>
+                        <span class="media-clean-label">موسيقى هادئة</span>
                     </div>
                 </div>
 
                 <div class="section-header-row">
-                    <div class="section-title">🏢 الغرف والدردشات العامة الحية</div>
+                    <div class="section-title">🏢 الغرف والدردشات العامة</div>
                     <button class="mini-action-btn" onclick="triggerCreatePrivateGroup()">➕ إنشاء مجموعة سرية</button>
                 </div>
-                <div class="rooms-grid">
-                    <div class="room-card" onclick="enterRoom('room1', '🌹 الغرفه العامه')"><span class="room-card-name">🌹 الغرفه العامه</span></div>
-                    <div class="room-card" onclick="enterRoom('room2', '☕ غرفة هدوء')"><span class="room-card-name">☕ غرفة هدوء</span></div>
-                    <div class="room-card" onclick="enterRoom('room3', '🤝 غرفة الاصدقاء')"><span class="room-card-name">🤝 غرفة الاصدقاء</span></div>
-                    <div class="room-card" onclick="enterRoom('room4', '🔥 غرفة شباب')"><span class="room-card-name">🔥 غرفة شباب</span></div>
-                    <div class="room-card" onclick="enterRoom('room5', '🎀 غرفة بنات')"><span class="room-card-name">🎀 غرفة بنات</span></div>
-                    <div class="room-card" onclick="enterRoom('room6', '✍️ غرفة اشعار')"><span class="room-card-name">✍️ غرفة اشعار</span></div>
+                
+                <div class="rooms-list-vertical">
+                    <div class="room-card-large" onclick="enterRoom('room1', '🌹 الغرفه العامه')">
+                        <span class="room-large-name">🌹 الغرفه العامه</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
+                    <div class="room-card-large" onclick="enterRoom('room2', '☕ غرفة هدوء')">
+                        <span class="room-large-name">☕ غرفة هدوء</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
+                    <div class="room-card-large" onclick="enterRoom('room3', '🤝 غرفة الاصدقاء')">
+                        <span class="room-large-name">🤝 غرفة الاصدقاء</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
+                    <div class="room-card-large" onclick="enterRoom('room4', '🔥 غرفة شباب')">
+                        <span class="room-large-name">🔥 غرفة شباب</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
+                    <div class="room-card-large" onclick="enterRoom('room5', '🎀 غرفة بنات')">
+                        <span class="room-large-name">🎀 غرفة بنات</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
+                    <div class="room-card-large" onclick="enterRoom('room6', '✍️ غرفة اشعار')">
+                        <span class="room-large-name">✍️ غرفة اشعار</span>
+                        <span class="room-large-arrow">◀</span>
+                    </div>
                 </div>
 
-                <div class="section-title">🔒 الدخول المباشر للمجموعات السرية لـ 10 أعضاء</div>
+                <div class="section-title">🔒 الدخول المباشر للمجموعات السرية (10 أعضاء)</div>
                 <div class="secret-search-box">
-                    <input type="text" class="secret-input" id="group-search-id-input" placeholder="اكتب رقم معرف الـ ID الفريد للمجموعة هنا...">
+                    <input type="text" class="secret-input" id="group-search-id-input" placeholder="اكتب رقم معرف الـ ID الفريد للمجموعة...">
                     <button class="mini-action-btn" style="background:#28a745;" onclick="processSearchAndEnterSecretGroup()">دخول مباشر 🔓</button>
                 </div>
 
@@ -243,7 +263,6 @@
         document.getElementById(pageId).classList.add('active');
     }
 
-    // محرك الميديا والبث الحي الذكي والمانع لسياسات حظر الصوت التلقائي بالمتصفحات
     window.startLiveAudioEngine = function(url, title) {
         if(audioLiveStream) { audioLiveStream.pause(); audioLiveStream = null; }
         
@@ -287,14 +306,12 @@
         loadMessagesEngine();
     };
 
-    // إنشاء مجموعة سرية مخفية تماماً لـ 10 أعضاء وتوليد ID عشوائي فريد
     window.triggerCreatePrivateGroup = function() {
         const groupName = prompt("أدخل اسم المجموعة السرية الجديدة:");
         if(!groupName) return;
         const password = prompt("أدخل الرقم السري لحماية هذه المجموعة:");
         if(!password) return;
         
-        // توليد معرف رقمي عشوائي فريد من 6 أرقام
         const generatedId = Math.floor(100000 + Math.random() * 900000).toString();
         
         db.collection("custom_groups").doc(generatedId).set({
@@ -308,7 +325,6 @@
         });
     };
 
-    // آلية البحث السري والدخول المباشر للمجموعات المخفية عبر الـ ID والباسورد
     window.processSearchAndEnterSecretGroup = function() {
         const searchId = document.getElementById("group-search-id-input").value.trim();
         if(!searchId) return alert("برجاء إدخال رقم المعرف الـ ID المكون من 6 أرقام أولاً.");
@@ -324,260 +340,3 @@
                     alert("عذراً، الرقم السري غير صحيح!");
                 }
             } else {
-                alert("لم يتم العثور على أي مجموعة سرية تطابق هذا الـ ID، تأكد من الرقم الصحيح.");
-            }
-        });
-    };
-
-    function listenToPrivateNotifications() {
-        db.collection("private_chats").where("recipient", "==", currentUsername).where("isRead", "==", false)
-        .onSnapshot(snap => {
-            privateBadgeCount.innerText = snap.size;
-            privateBadgeCount.style.display = snap.size > 0 ? "flex" : "none";
-        });
-    }
-
-    document.getElementById('nav-notification-btn').addEventListener('click', () => {
-        db.collection("private_chats").where("recipient", "==", currentUsername).where("isRead", "==", false).limit(1).get().then(snap => {
-            if(!snap.empty) { openPrivateChatWindow(snap.docs[0].data().sender); } else { alert("صندوق الرسائل الخاصة بك فارغ حالياً."); }
-        });
-    });
-
-    window.initiateReplyQuote = function(sender, text) {
-        selectedReplySender = sender;
-        selectedReplyText = text;
-        document.getElementById('reply-preview-text').innerText = `رد على ${sender}: ${text.substring(0, 25)}...`;
-        document.getElementById('reply-preview-container').style.display = "flex";
-        chatMessageInput.focus();
-    };
-
-    window.cancelReplyQuote = function() {
-        selectedReplySender = "";
-        selectedReplyText = "";
-        document.getElementById('reply-preview-container').style.display = "none";
-    };
-
-    // محرك الفايربيس الكامل لعرض وإدارة الرسائل التاريخية والأعجابات بالداخل
-    function loadMessagesEngine() {
-        if(chatUnsubscribe) chatUnsubscribe();
-        chatMessagesBox.innerHTML = "";
-        
-        let queryRef;
-        if(isPrivateChat) {
-            // جلب تاريخ وسجل شات الخاص كاملاً وتصاعدياً دون اختفاء نهائياً عند الخروج
-            queryRef = db.collection("private_chats")
-            .where("chatIdentityKey", "in", [`${currentUsername}_${privateRecipientName}`, `${privateRecipientName}_${currentUsername}`])
-            .orderBy("timestamp", "asc");
-            
-            db.collection("private_chats").where("sender", "==", privateRecipientName).where("recipient", "==", currentUsername)
-            .get().then(snap => snap.forEach(d => d.ref.update({ isRead: true })));
-        } else if(isGroupChat) {
-            queryRef = db.collection("custom_groups").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
-        } else {
-            queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
-        }
-        
-        chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
-            chatMessagesBox.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                if(!data.sender) return;
-                
-                const isMe = data.sender === currentUsername;
-                const wrapper = document.createElement('div');
-                wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
-                
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-                bubble.style.backgroundColor = isMe ? "#e1ffc7" : "#ffffff";
-                bubble.style.borderRadius = isMe ? "12px 0px 12px 12px" : "0px 12px 12px 12px";
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.className = "sender-name";
-                nameSpan.innerText = data.sender;
-                if(!isMe) { nameSpan.onclick = () => openPrivateChatWindow(data.sender); }
-                bubble.appendChild(nameSpan);
-                
-                if(data.replyToText) {
-                    const replyDiv = document.createElement('div');
-                    replyDiv.className = "reply-quote";
-                    replyDiv.innerText = `💬 ${data.replyToSender}: ${data.replyToText}`;
-                    bubble.appendChild(replyDiv);
-                }
-
-                if(data.text) {
-                    const textSpan = document.createElement('span');
-                    textSpan.innerText = data.text;
-                    bubble.appendChild(textSpan);
-                }
-                
-                // البصمة والتسجيل الصوتي المخصص والناعم جداً كشكل الاسكرين
-                if(data.mediaUrl) {
-                    const mediaDiv = document.createElement('div');
-                    mediaDiv.style.marginTop = "5px";
-                    if(data.mediaType === 'image') {
-                        mediaDiv.innerHTML = `<img src="${data.mediaUrl}" style="max-width:100%; border-radius:8px; max-height:180px; object-fit:cover;">`;
-                    } else if(data.mediaType === 'audio') {
-                        mediaDiv.innerHTML = `
-                            <div class="custom-voice-bubble">
-                                <button class="voice-play-btn" onclick="toggleVoicePlayback(this, '${data.mediaUrl}')">▶</button>
-                                <span style="font-size:11px; color:#555; font-weight:bold;">بصمة صوتية 🎙️</span>
-                            </div>`;
-                    }
-                    bubble.appendChild(mediaDiv);
-                }
-                
-                const footer = document.createElement('div');
-                footer.className = "bubble-footer";
-                
-                const leftActions = document.createElement('div');
-                leftActions.style.display = "flex";
-                leftActions.style.gap = "12px";
-                
-                const replyBtn = document.createElement('button');
-                replyBtn.className = "action-btn";
-                replyBtn.innerText = "↩️";
-                replyBtn.title = "رد على هذه الرسالة";
-                replyBtn.onclick = () => initiateReplyQuote(data.sender, data.text || "[وسائط]");
-                leftActions.appendChild(replyBtn);
-                
-                // ميزة الإعجاب (اللايك) المدمجة بكل الرسائل داخل الفقاعة
-                const likesArray = data.likedBy || [];
-                const hasLiked = likesArray.includes(currentUsername);
-                const likeBtn = document.createElement('button');
-                likeBtn.className = `action-btn ${hasLiked ? 'liked' : ''}`;
-                likeBtn.innerHTML = `👍 <span>${likesArray.length}</span>`;
-                likeBtn.onclick = () => processLikeToggle(doc.id, likesArray, hasLiked);
-                leftActions.appendChild(likeBtn);
-                
-                const timeSpan = document.createElement('span');
-                timeSpan.style.fontSize = "9px";
-                timeSpan.style.color = "#777";
-                timeSpan.innerText = data.timestamp ? data.timestamp.toDate().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : "الآن";
-                
-                footer.appendChild(leftActions);
-                footer.appendChild(timeSpan);
-                bubble.appendChild(footer);
-                wrapper.appendChild(bubble);
-                chatMessagesBox.appendChild(wrapper);
-            });
-            chatMessagesBox.scrollTop = chatMessagesBox.scrollHeight;
-        });
-    }
-
-    window.toggleVoicePlayback = function(btn, src) {
-        let player = btn.audioNode;
-        if(!player) { player = new Audio(src); btn.audioNode = player; player.onended = () => btn.innerText = "▶"; }
-        if(player.paused) { player.play(); btn.innerText = "⏸"; } else { player.pause(); btn.innerText = "▶"; }
-    };
-
-    function processLikeToggle(msgId, likesArray, hasLiked) {
-        let updatedLikes = [...likesArray];
-        if(hasLiked) {
-            updatedLikes = updatedLikes.filter(u => u !== currentUsername);
-        } else {
-            updatedLikes.push(currentUsername);
-        }
-        
-        const docRef = isPrivateChat 
-            ? db.collection("private_chats").doc(msgId)
-            : (isGroupChat ? db.collection("custom_groups").doc(currentRoomId).collection("messages").doc(msgId) : db.collection("rooms").doc(currentRoomId).collection("messages").doc(msgId));
-            
-        docRef.update({ likedBy: updatedLikes });
-    }
-
-    function processMessageSend() {
-        const textValue = chatMessageInput.value.trim();
-        if (textValue === '') return;
-        
-        const payload = {
-            sender: currentUsername,
-            text: textValue,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            likedBy: []
-        };
-
-        if(selectedReplyText) {
-            payload.replyToText = selectedReplyText;
-            payload.replyToSender = selectedReplySender;
-        }
-
-        if(isPrivateChat) {
-            payload.recipient = privateRecipientName;
-            payload.isRead = false;
-            payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
-            db.collection("private_chats").add(payload);
-        } else if(isGroupChat) {
-            db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
-        } else {
-            db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
-        }
-        
-        chatMessageInput.value = '';
-        cancelReplyQuote();
-    }
-
-    // إدارة تسجيل الصوت المباشر بجودة وسلاسة عالية للبصمة
-    chatMessageInput.addEventListener('input', () => { micSubmitBtn.innerHTML = chatMessageInput.value.trim() !== "" ? "▼" : "▼"; });
-    micSubmitBtn.addEventListener('click', () => { if(chatMessageInput.value.trim() !== "") { processMessageSend(); } else { toggleVoiceRecordingEngine(); } });
-    chatMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processMessageSend(); });
-
-    function handleFileUpload(file, type) {
-        if(!file) return;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-            const payload = {
-                sender: currentUsername,
-                mediaUrl: reader.result,
-                mediaType: type,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                likedBy: []
-            };
-            if(isPrivateChat) {
-                payload.recipient = privateRecipientName; payload.isRead = false; payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
-                db.collection("private_chats").add(payload);
-            } else if(isGroupChat) {
-                db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
-            } else {
-                db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
-            }
-        };
-    }
-
-    document.getElementById('file-loader-cam').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'image'));
-    document.getElementById('file-loader-clip').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'audio'));
-
-    async function toggleVoiceRecordingEngine() {
-        if (!isRecordingAudio) {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorderObj = new MediaRecorder(stream);
-                audioDataChunks = [];
-                mediaRecorderObj.ondataavailable = e => audioDataChunks.push(e.data);
-                mediaRecorderObj.onstop = () => {
-                    const blob = new Blob(audioDataChunks, { type: 'audio/mp3' });
-                    const r = new FileReader();
-                    r.readAsDataURL(blob);
-                    r.onloadend = () => {
-                        const p = { sender: currentUsername, mediaUrl: r.result, mediaType: 'audio', timestamp: firebase.firestore.FieldValue.serverTimestamp(), likedBy: [] };
-                        if(isPrivateChat) { p.recipient = privateRecipientName; p.isRead = false; p.chatIdentityKey = `${currentUsername}_${privateRecipientName}`; db.collection("private_chats").add(p); }
-                        else if(isGroupChat) { db.collection("custom_groups").doc(currentRoomId).collection("messages").add(p); }
-                        else { db.collection("rooms").doc(currentRoomId).collection("messages").add(p); }
-                    };
-                };
-                mediaRecorderObj.start();
-                isRecordingAudio = true;
-                micSubmitBtn.classList.add('mic-active-wa');
-                chatMessageInput.placeholder = "🎙️ جاري تسجيل بصمتك الصوتية الحية...";
-            } catch (err) { alert("يرجى تفعيل إذن الوصول للميكروفون."); }
-        } else {
-            mediaRecorderObj.stop();
-            isRecordingAudio = false;
-            micSubmitBtn.classList.remove('mic-active-wa');
-            chatMessageInput.placeholder = "اكتب رسالة...";
-        }
-    }
-</script>
-</body>
-</html>
