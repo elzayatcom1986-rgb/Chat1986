@@ -38,16 +38,16 @@
         .section-header-row { display: flex; align-items: center; justify-content: space-between; }
         .mini-action-btn { background: #007bff; color: white; border: none; padding: 6px 14px; border-radius: 15px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-        /* تصميم صف الميديا الأنيق: الأيقونة وتحتها النص مباشرة بدون العنوان الكبير */
-        .media-clean-row { display: flex; justify-content: center; gap: 40px; padding: 10px 0 5px 0; }
-        .media-clean-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .media-clean-circle { background: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 3px 8px rgba(0,0,0,0.08); border: 1px solid #e3e3e3; transition: transform 0.2s; }
-        .media-clean-item:active .media-clean-circle { transform: scale(0.9); }
-        .media-clean-label { font-size: 12px; font-weight: bold; color: #444; }
+        /* تعديل: رجعنا الحجم والتصميم الأصلي الفخم (كروت أفقية عريضة مقسمة بالتساوي) وبدون عنوان علوي مزعج */
+        .media-original-row { display: flex; gap: 12px; padding: 6px 0; }
+        .media-original-card { flex: 1; background: white; padding: 16px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; display: flex; align-items: center; gap: 12px; border-right: 5px solid #007bff; transition: background 0.2s; }
+        .media-original-card:active { background: #f7f7f7; }
+        .media-original-icon { font-size: 24px; }
+        .media-original-text { font-size: 14px; font-weight: bold; color: #222; }
 
         .live-audio-player-bar { background: #222; color: white; padding: 10px 16px; display: none; align-items: center; justify-content: space-between; font-size: 13px; }
 
-        /* أيقونات الدردشة الغرف العامة الكبيرة والممتازة */
+        /* الغرف العامة بالحجم الكبير والواضح جداً الأصلي */
         .rooms-list-vertical { display: flex; flex-direction: column; gap: 12px; }
         .room-card-large { background: white; padding: 18px 16px; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); cursor: pointer; border-right: 5px solid var(--whatsapp-green); display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; }
         .room-card-large:active { background: #f7f7f7; }
@@ -73,7 +73,7 @@
         
         .reply-quote { background: rgba(0,0,0,0.05); border-right: 3px solid #007bff; padding: 4px 6px; font-size: 11px; color: #555; border-radius: 4px; margin-bottom: 5px; }
 
-        /* مشغل البصمة الصوتية المخصص الناعم */
+        /* مشغل البصمة الصوتية */
         .custom-voice-bubble { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.04); padding: 6px 12px; border-radius: 20px; margin-top: 4px; min-width: 150px; }
         .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; font-size: 11px; display: flex; align-items: center; justify-content: center; }
 
@@ -127,14 +127,14 @@
         <div class="app-page active" id="page-home">
             <div class="home-dashboard">
                 
-                <div class="media-clean-row">
-                    <div class="media-clean-item" onclick="startLiveAudioEngine('https://qurango.net/radio/tarfeeh', '🕋 إذاعة القرآن الكريم المباشرة')">
-                        <div class="media-clean-circle">🕋</div>
-                        <span class="media-clean-label">إذاعة القرآن</span>
+                <div class="media-original-row">
+                    <div class="media-original-card" onclick="startLiveAudioEngine('https://qurango.net/radio/tarfeeh', '🕋 إذاعة القرآن الكريم المباشرة')">
+                        <span class="media-original-icon">🕋</span>
+                        <span class="media-original-text">إذاعة القرآن</span>
                     </div>
-                    <div class="media-clean-item" onclick="startLiveAudioEngine('https://stream.zeno.fm/f93863897v8uv', '🎵 راديو الموسيقى الكلاسيكية الهادئة')">
-                        <div class="media-clean-circle">🎵</div>
-                        <span class="media-clean-label">موسيقى هادئة</span>
+                    <div class="media-original-card" onclick="startLiveAudioEngine('https://stream.zeno.fm/f93863897v8uv', '🎵 راديو الموسيقى الكلاسيكية الهادئة')">
+                        <span class="media-original-icon">🎵</span>
+                        <span class="media-original-text">موسيقى هادئة</span>
                     </div>
                 </div>
 
@@ -340,3 +340,105 @@
                     alert("عذراً، الرقم السري غير صحيح!");
                 }
             } else {
+                alert("لم يتم العثور على أي مجموعة سرية تطابق هذا الـ ID، تأكد من الرقم الصحيح.");
+            }
+        });
+    };
+
+    function listenToPrivateNotifications() {
+        db.collection("private_chats").where("recipient", "==", currentUsername).where("isRead", "==", false)
+        .onSnapshot(snap => {
+            privateBadgeCount.innerText = snap.size;
+            privateBadgeCount.style.display = snap.size > 0 ? "flex" : "none";
+        });
+    }
+
+    document.getElementById('nav-notification-btn').addEventListener('click', () => {
+        db.collection("private_chats").where("recipient", "==", currentUsername).where("isRead", "==", false).limit(1).get().then(snap => {
+            if(!snap.empty) { openPrivateChatWindow(snap.docs[0].data().sender); } else { alert("صندوق الرسائل الخاصة بك فارغ حالياً."); }
+        });
+    });
+
+    window.initiateReplyQuote = function(sender, text) {
+        selectedReplySender = sender;
+        selectedReplyText = text;
+        document.getElementById('reply-preview-text').innerText = `رد على ${sender}: ${text.substring(0, 25)}...`;
+        document.getElementById('reply-preview-container').style.display = "flex";
+        chatMessageInput.focus();
+    };
+
+    window.cancelReplyQuote = function() {
+        selectedReplySender = "";
+        selectedReplyText = "";
+        document.getElementById('reply-preview-container').style.display = "none";
+    };
+
+    function loadMessagesEngine() {
+        if(chatUnsubscribe) chatUnsubscribe();
+        chatMessagesBox.innerHTML = "";
+        
+        let queryRef;
+        if(isPrivateChat) {
+            queryRef = db.collection("private_chats")
+            .where("chatIdentityKey", "in", [`${currentUsername}_${privateRecipientName}`, `${privateRecipientName}_${currentUsername}`])
+            .orderBy("timestamp", "asc");
+            
+            db.collection("private_chats").where("sender", "==", privateRecipientName).where("recipient", "==", currentUsername)
+            .get().then(snap => snap.forEach(d => d.ref.update({ isRead: true })));
+        } else if(isGroupChat) {
+            queryRef = db.collection("custom_groups").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
+        } else {
+            queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
+        }
+        
+        chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
+            chatMessagesBox.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if(!data.sender) return;
+                
+                const isMe = data.sender === currentUsername;
+                const wrapper = document.createElement('div');
+                wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.backgroundColor = isMe ? "#e1ffc7" : "#ffffff";
+                bubble.style.borderRadius = isMe ? "12px 0px 12px 12px" : "0px 12px 12px 12px";
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = "sender-name";
+                nameSpan.innerText = data.sender;
+                if(!isMe) { nameSpan.onclick = () => openPrivateChatWindow(data.sender); }
+                bubble.appendChild(nameSpan);
+                
+                if(data.replyToText) {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = "reply-quote";
+                    replyDiv.innerText = `💬 ${data.replyToSender}: ${data.replyToText}`;
+                    bubble.appendChild(replyDiv);
+                }
+
+                if(data.text) {
+                    const textSpan = document.createElement('span');
+                    textSpan.innerText = data.text;
+                    bubble.appendChild(textSpan);
+                }
+                
+                if(data.mediaUrl) {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.style.marginTop = "5px";
+                    if(data.mediaType === 'image') {
+                        mediaDiv.innerHTML = `<img src="${data.mediaUrl}" style="max-width:100%; border-radius:8px; max-height:180px; object-fit:cover;">`;
+                    } else if(data.mediaType === 'audio') {
+                        mediaDiv.innerHTML = `
+                            <div class="custom-voice-bubble">
+                                <button class="voice-play-btn" onclick="toggleVoicePlayback(this, '${data.mediaUrl}')">▶</button>
+                                <span style="font-size:11px; color:#555; font-weight:bold;">بصمة صوتية 🎙️</span>
+                            </div>`;
+                    }
+                    bubble.appendChild(mediaDiv);
+                }
+                
+                const footer = document.createElement('div');
+                footer.className = "bubble-footer
