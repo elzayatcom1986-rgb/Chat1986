@@ -441,4 +441,152 @@
                 }
                 
                 const footer = document.createElement('div');
-                footer.className = "bubble-footer
+                footer.className = "bubble-footer";
+                
+                const leftActions = document.createElement('div');
+                leftActions.style.display = "flex";
+                leftActions.style.gap = "12px";
+                
+                const replyBtn = document.createElement('button');
+                replyBtn.className = "action-btn";
+                replyBtn.innerText = "↩️";
+                replyBtn.onclick = () => initiateReplyQuote(data.sender, data.text || "[وسائط]");
+                leftActions.appendChild(replyBtn);
+                
+                const likesArray = data.likedBy || [];
+                const hasLiked = likesArray.includes(currentUsername);
+                const likeBtn = document.createElement('button');
+                likeBtn.className = `action-btn ${hasLiked ? 'liked' : ''}`;
+                likeBtn.innerHTML = `👍 <span>${likesArray.length}</span>`;
+                likeBtn.onclick = () => processLikeToggle(doc.id, likesArray, hasLiked);
+                leftActions.appendChild(likeBtn);
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.style.fontSize = "9px";
+                timeSpan.style.color = "#777";
+                timeSpan.innerText = data.timestamp ? data.timestamp.toDate().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : "الآن";
+                
+                footer.appendChild(leftActions);
+                footer.appendChild(timeSpan);
+                bubble.appendChild(footer);
+                wrapper.appendChild(bubble);
+                chatMessagesBox.appendChild(wrapper);
+            });
+            chatMessagesBox.scrollTop = chatMessagesBox.scrollHeight;
+        });
+    }
+
+    window.toggleVoicePlayback = function(btn, src) {
+        let player = btn.audioNode;
+        if(!player) { player = new Audio(src); btn.audioNode = player; player.onended = () => btn.innerText = "▶"; }
+        if(player.paused) { player.play(); btn.innerText = "⏸"; } else { player.pause(); btn.innerText = "▶"; }
+    };
+
+    function processLikeToggle(msgId, likesArray, hasLiked) {
+        let updatedLikes = [...likesArray];
+        if(hasLiked) {
+            updatedLikes = updatedLikes.filter(u => u !== currentUsername);
+        } else {
+            updatedLikes.push(currentUsername);
+        }
+        
+        const docRef = isPrivateChat 
+            ? db.collection("private_chats").doc(msgId)
+            : (isGroupChat ? db.collection("custom_groups").doc(currentRoomId).collection("messages").doc(msgId) : db.collection("rooms").doc(currentRoomId).collection("messages").doc(msgId));
+            
+        docRef.update({ likedBy: updatedLikes });
+    }
+
+    function processMessageSend() {
+        const textValue = chatMessageInput.value.trim();
+        if (textValue === '') return;
+        
+        const payload = {
+            sender: currentUsername,
+            text: textValue,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            likedBy: []
+        };
+
+        if(selectedReplyText) {
+            payload.replyToText = selectedReplyText;
+            payload.replyToSender = selectedReplySender;
+        }
+
+        if(isPrivateChat) {
+            payload.recipient = privateRecipientName;
+            payload.isRead = false;
+            payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
+            db.collection("private_chats").add(payload);
+        } else if(isGroupChat) {
+            db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
+        } else {
+            db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
+        }
+        
+        chatMessageInput.value = '';
+        cancelReplyQuote();
+    }
+
+    micSubmitBtn.addEventListener('click', () => { if(chatMessageInput.value.trim() !== "") { processMessageSend(); } else { toggleVoiceRecordingEngine(); } });
+    chatMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processMessageSend(); });
+
+    function handleFileUpload(file, type) {
+        if(!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            const payload = {
+                sender: currentUsername,
+                mediaUrl: reader.result,
+                mediaType: type,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                likedBy: []
+            };
+            if(isPrivateChat) {
+                payload.recipient = privateRecipientName; payload.isRead = false; payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
+                db.collection("private_chats").add(payload);
+            } else if(isGroupChat) {
+                db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
+            } else {
+                db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
+            }
+        };
+    }
+
+    document.getElementById('file-loader-cam').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'image'));
+    document.getElementById('file-loader-clip').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'audio'));
+
+    async function toggleVoiceRecordingEngine() {
+        if (!isRecordingAudio) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderObj = new MediaRecorder(stream);
+                audioDataChunks = [];
+                mediaRecorderObj.ondataavailable = e => audioDataChunks.push(e.data);
+                mediaRecorderObj.onstop = () => {
+                    const blob = new Blob(audioDataChunks, { type: 'audio/mp3' });
+                    const r = new FileReader();
+                    r.readAsDataURL(blob);
+                    r.onloadend = () => {
+                        const p = { sender: currentUsername, mediaUrl: r.result, mediaType: 'audio', timestamp: firebase.firestore.FieldValue.serverTimestamp(), likedBy: [] };
+                        if(isPrivateChat) { p.recipient = privateRecipientName; p.isRead = false; p.chatIdentityKey = `${currentUsername}_${privateRecipientName}`; db.collection("private_chats").add(p); }
+                        else if(isGroupChat) { db.collection("custom_groups").doc(currentRoomId).collection("messages").add(p); }
+                        else { db.collection("rooms").doc(currentRoomId).collection("messages").add(p); }
+                    };
+                };
+                mediaRecorderObj.start();
+                isRecordingAudio = true;
+                micSubmitBtn.classList.add('mic-active-wa');
+                chatMessageInput.placeholder = "🎙️ جاري تسجيل بصمتك الصوتية الحية...";
+            } catch (err) { alert("يرجى تفعيل إذن الوصول للميكروفون."); }
+        } else {
+            mediaRecorderObj.stop();
+            isRecordingAudio = false;
+            micSubmitBtn.classList.remove('mic-active-wa');
+            chatMessageInput.placeholder = "اكتب رسالة...";
+        }
+    }
+</script>
+</body>
+</html>
