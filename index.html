@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>شات نبض العرب - النسخة الكاملة الشغالة</title>
+    <title>شات نبض العرب - النسخة المعتمدة الشغالة</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -61,10 +61,10 @@
         .section-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .section-main-title { font-size: 15px; color: var(--primary-dark); font-weight: bold; border-right: 4px solid var(--primary); padding-right: 8px; }
 
-        /* 🔥 تجديد وتثبيت حجم كروت الغرف بشكل فخم ومضمون الظهور */
+        /* 🔥 التصميم المعتمد المطور للغرف: أبعاد فخمة وثابتة الرؤية */
         .rooms-grid-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
         .room-card-square { 
-            background: #ffffff !important; 
+            background: white !important; 
             height: 95px !important; 
             padding: 0 16px !important; 
             border-radius: 16px !important; 
@@ -74,10 +74,10 @@
             display: flex !important; 
             align-items: center !important; 
             justify-content: space-between !important; 
-            visibility: visible !important;
-            opacity: 1 !important;
+            transition: transform 0.15s;
         }
-        .room-square-name { font-size: 16px !important; font-weight: 800 !important; color: #111 !important; white-space: nowrap; }
+        .room-card-square:active { transform: scale(0.96); background: #fafafa; }
+        .room-square-name { font-size: 16px !important; font-weight: 800 !important; color: #111 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .room-square-arrow { color: var(--whatsapp-green); font-size: 15px; font-weight: bold; }
 
         /* صندوق المجموعات السرية */
@@ -96,14 +96,47 @@
         .post-meta-info { display: flex; flex-direction: column; }
         .post-user-name { font-size: 14px; font-weight: bold; color: #222; }
         .post-user-badges { font-size: 11px; color: #777; }
+        .post-text { font-size: 14px; color: #333; line-height: 1.45; white-space: pre-wrap; }
+        .post-attached-img { max-width: 100%; max-height: 240px; border-radius: 10px; object-fit: cover; margin-top: 4px; }
+        .post-interactions { display: flex; gap: 20px; border-top: 1px solid #f5f5f5; padding-top: 10px; }
+        .interact-btn { background: none; border: none; font-size: 13px; font-weight: bold; color: #555; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .interact-btn.liked { color: #d32f2f; }
         
+        .post-comments-section { background: #f9f9f9; border-radius: 10px; padding: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+        .single-comment-row { background: white; padding: 8px 12px; border-radius: 8px; }
+        .comment-input-row { display: flex; gap: 8px; margin-top: 6px; }
+        .comment-mini-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 18px; outline: none; font-size: 12px; }
+
+        /* شاشة حسابي الشخصي */
+        .profile-setup-box { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .profile-main-avatar { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        .profile-grid-fields { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; text-align: right; }
+        .field-block { display: flex; flex-direction: column; gap: 4px; }
+        .field-block label { font-size: 12px; font-weight: bold; color: #555; }
+        .field-select, .field-input-text { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; outline: none; font-size: 13px; }
+        .notifications-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .notify-item-card { background: #fff; padding: 12px; border-radius: 12px; box-shadow: 0 1px 5px rgba(0,0,0,0.04); font-size: 13px; display: flex; justify-content: space-between; align-items: center; border-right: 4px solid #ff9500; }
+
         /* شاشة الدردشة والمحادثة الكاملة */
         .chat-view-container { position: absolute; inset: 0; display: none; flex-direction: column; background-color: var(--bg-chat); background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); z-index: 500; }
         .chat-view-container.active { display: flex; }
         .chat-subheader { background: rgba(255, 255, 255, 0.95); padding: 0 14px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; height: 50px; min-height: 50px; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .messages-area { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
         
-        /* شريط الإرسال المحمي والمثبت بأبعاد قياسية للأجهزة الكبيرة والصغيرة */
+        /* كبسولة الرسائل المدمجة */
+        .msg-wrapper { display: flex; align-items: flex-end; gap: 8px; max-width: 85%; }
+        .msg-wrapper.me { align-self: flex-start; }
+        .msg-wrapper.other { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-user-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+        
+        .bubble { padding: 10px 14px; border-radius: 14px; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-width: 150px; }
+        .sender-name { font-size: 12px; font-weight: bold; color: var(--primary-dark); margin-bottom: 4px; cursor: pointer; }
+        .reply-quote { background: rgba(0,0,0,0.04); border-right: 3px solid var(--accent-blue); padding: 5px 8px; font-size: 12px; color: #555; border-radius: 6px; margin-bottom: 6px; }
+        .custom-voice-bubble { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.03); padding: 6px 12px; border-radius: 20px; }
+        .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 10px; color: #777; }
+
+        /* 🔥 شريط الإرسال المحمي والذكي بأبعاد هندسية ثابتة */
         .input-row-wa { 
             display: flex; 
             align-items: center; 
@@ -155,10 +188,23 @@
             justify-content: center; 
             cursor: pointer; 
             flex-shrink: 0; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); 
         }
+        .mic-active-wa { background-color: #d32f2f !important; }
+
+        .modal-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
 <body>
+
+    <div class="modal-screen" id="profile-setup-screen" style="display: none;">
+        <div style="background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom: 14px; color: var(--primary);">مرحباً بك في شات نبض العرب ✨</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 14px;">يرجى كتابة اسمك المستعار لبدء الدردشة الفورية</p>
+            <input type="text" class="field-input-text" id="initial-username-input" placeholder="اكتب اسمك المستعار هنا..." style="text-align:center; margin-bottom:16px; border-radius:24px;">
+            <button class="mini-action-btn" id="submit-profile-btn" style="width:100%; padding:12px; border-radius:24px; font-size:14px; background:var(--primary);">دخول التطبيق 🔓</button>
+        </div>
+    </div>
 
     <div class="header">
         <span class="header-title">💬 شات نبض العرب</span>
@@ -236,8 +282,12 @@
         <div class="app-page" id="page-forum">
             <div class="forum-composer">
                 <textarea class="composer-textarea" id="forum-text-input" placeholder="شارك حالتك أو منشورك اليوم مع الجميع..."></textarea>
+                <div id="forum-img-preview-box" style="display:none; position:relative; margin-top:4px;">
+                    <img id="forum-preview-tag" src="" style="max-width:80px; max-height:80px; border-radius:6px; object-fit:cover;">
+                    <button style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:10px;" onclick="cancelForumPhotoAttach()">✕</button>
+                </div>
                 <div class="composer-actions">
-                    <button class="mini-action-btn" style="background:#6c757d;" onclick="document.getElementById('forum-file-loader').click()">🖼️ إرفاق صورة</button>
+                    <button class="mini-action-btn" style="background:#6c757d;" onclick="document.getElementById('forum-file-loader').click()">🖼️ إرفاق صورة حقيقية</button>
                     <input type="file" id="forum-file-loader" accept="image/*" style="display:none;">
                     <button class="mini-action-btn" onclick="submitForumPostEngine()">نشر المنشور ✨</button>
                 </div>
@@ -247,11 +297,15 @@
 
         <div class="app-page" id="page-my-account">
             <div class="profile-setup-box">
-                <h4 id="my-profile-display-name">المستخدم الافتراضي</h4>
+                <label style="position:relative; cursor:pointer;">
+                    <img class="profile-main-avatar" id="my-profile-avatar-tag" src="https://www.w3schools.com/howto/img_avatar.png">
+                    <input type="file" id="my-avatar-file-input" accept="image/*" style="display:none;" onchange="updateProfilePhotoEngine(this)">
+                </label>
+                <h4 id="my-profile-display-name">اسم المستخدم</h4>
                 <div class="profile-grid-fields">
                     <div class="field-block">
                         <label>العمر / السن</label>
-                        <input type="number" class="field-input-text" id="my-profile-age" value="25">
+                        <input type="number" class="field-input-text" id="my-profile-age">
                     </div>
                     <div class="field-block">
                         <label>الجنس</label>
@@ -276,6 +330,11 @@
 
         <div class="messages-area" id="chat-messages-box"></div>
 
+        <div id="reply-preview-container" style="display:none; background:#ffffff; padding:6px 14px; font-size:12px; border-top:2px solid var(--accent-blue); justify-content:space-between; align-items:center; width:100%;">
+            <span id="reply-preview-text" style="color:#555;"></span>
+            <button style="border:none; background:none; color:red; font-weight:bold;" onclick="cancelReplyQuote()">✕</button>
+        </div>
+
         <div class="input-row-wa">
             <div class="input-bar-wa">
                 <input type="file" id="file-loader-cam" accept="image/*,video/*" style="display:none;">
@@ -292,7 +351,7 @@
 
 <script>
     // =========================================================================
-    // 🛡️ الـ Logic البرمجي الكامل والنهائي بدون أي أكواد معطلة لفتح الصفحة فوراً
+    // 🛡️ الـ 250 سطر البرمجي وجافا سكريبت الأصلي بالكامل منقح ومؤمن ضد الأخطاء
     // =========================================================================
     
     // تهيئة الـ Firebase الأساسية
@@ -304,10 +363,14 @@
         messagingSenderId: "155364355450",
         appId: "1:155364355450:web:8e3dfb52f9b17bbd"
     };
-    firebase.initializeApp(firebaseConfig);
+    
+    // التأكد من عدم تكرار التهيئة
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.firestore();
 
-    // متغيرات الجلسة والتحكم
+    // متغيرات التحكم والجلسة المستمرة
     let currentRoomId = "room1";
     let isPrivateChat = false;
     let isGroupChat = false;
@@ -319,28 +382,49 @@
     let mediaRecorderObj;
     let audioDataChunks = [];
     let isRecordingAudio = false;
+    let attachedForumPhotoBase64 = "";
 
-    // تم توليد اسم افتراضي تلقائياً لمنع توقف الـ JS والشاشة البيضاء
-    let currentUsername = localStorage.getItem('chat_user_name') || "مستخدم_" + Math.floor(1000 + Math.random() * 9000);
-    localStorage.setItem('chat_user_name', currentUsername);
-    let userAvatar = "https://www.w3schools.com/howto/img_avatar.png";
+    let currentUsername = localStorage.getItem('chat_user_name') || "";
+    let userAge = localStorage.getItem('chat_user_age') || "";
+    let userGender = localStorage.getItem('chat_user_gender') || "ذكر";
+    let userAvatar = localStorage.getItem('chat_user_avatar') || "https://www.w3schools.com/howto/img_avatar.png";
 
     const chatMessagesBox = document.getElementById('chat-messages-box');
     const chatMessageInput = document.getElementById('chat-message-input');
     const micSubmitBtn = document.getElementById('mic-submit-btn');
 
-    // تشغيل وإطلاق الواجهة فورا عند التحميل
+    // تشغيل آمن عند تحميل الصفحة دون حجب العناصر أو إحداث شاشة بيضاء
     window.onload = function() {
-        initDashboardEngine();
+        if (!currentUsername) {
+            document.getElementById('profile-setup-screen').style.display = "flex";
+        } else {
+            initDashboardEngine();
+        }
     };
+
+    // معالج الدخول لمرة واحدة
+    document.getElementById('submit-profile-btn').addEventListener('click', () => {
+        const nameVal = document.getElementById('initial-username-input').value.trim();
+        if(!nameVal) return alert("الرجاء إدخال اسمك أولاً للدخول في شات نبض العرب.");
+        currentUsername = nameVal;
+        localStorage.setItem('chat_user_name', currentUsername);
+        document.getElementById('profile-setup-screen').style.display = "none";
+        initDashboardEngine();
+    });
 
     function initDashboardEngine() {
         document.getElementById('global-user-tag').innerText = `👤 ${currentUsername}`;
         document.getElementById('my-profile-display-name').innerText = currentUsername;
+        document.getElementById('my-profile-age').value = userAge;
+        document.getElementById('my-profile-gender').value = userGender;
+        document.getElementById('my-profile-avatar-tag').src = userAvatar;
+        
         loadForumFeedEngine();
+        listenGlobalNotificationsEngine();
         renderJoinedSecretGroupsUI();
     }
 
+    // إدارة التبديل التلقائي لزر الإرسال/المايك عند الكتابة
     window.handleInputChangeUI = function(input) {
         if(input.value.trim() !== "") {
             micSubmitBtn.innerHTML = "🚀";
@@ -362,11 +446,28 @@
         btn.classList.add('active');
     };
 
+    // دخول غرف المحادثة العامة أو السرية
     window.enterRoom = function(roomId, roomTitle, isGroup = false) {
         isPrivateChat = false;
         isGroupChat = isGroup;
         currentRoomId = roomId;
         document.getElementById('current-chat-target-title').innerText = roomTitle;
+        document.getElementById('global-chat-window').classList.add('active');
+        loadMessagesEngine();
+    };
+
+    // فتح محادثة خاصة مباشرة بناء على ضغط الاسم المستعار
+    window.openPrivateChatEngine = function(targetName) {
+        if(targetName === currentUsername) return;
+        isPrivateChat = true;
+        isGroupChat = false;
+        privateRecipientName = targetName;
+        
+        // توليد معرف محادثة فريد وثابت بين الطرفين أبجدياً
+        const sortedIds = [currentUsername, targetName].sort();
+        currentRoomId = `p2p_${sortedIds[0]}_and_${sortedIds[1]}`;
+        
+        document.getElementById('current-chat-target-title').innerText = `🔒 محادثة خاصة مع: ${targetName}`;
         document.getElementById('global-chat-window').classList.add('active');
         loadMessagesEngine();
     };
@@ -389,48 +490,256 @@
         document.getElementById('live-media-bar').style.display = "none";
     };
 
+    window.updateProfilePhotoEngine = function(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            userAvatar = reader.result;
+            document.getElementById('my-profile-avatar-tag').src = userAvatar;
+            localStorage.setItem('chat_user_avatar', userAvatar);
+        };
+        reader.readAsDataURL(file);
+    };
+
     window.saveProfileDataEngine = function() {
-        alert("🎉 تم حفظ وتحديث بياناتك الشخصية!");
+        const ageVal = document.getElementById('my-profile-age').value;
+        const genderVal = document.getElementById('my-profile-gender').value;
+        localStorage.setItem('chat_user_age', ageVal);
+        localStorage.setItem('chat_user_gender', genderVal);
+        userAge = ageVal; userGender = genderVal;
+        alert("🎉 تم حفظ وتحديث بياناتك الشخصية بنجاح!");
+    };
+
+    // ==========================================
+    // منطق المنتدى الكامل (نشر، صور، إعجابات، تعليقات)
+    // ==========================================
+    document.getElementById('forum-file-loader').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            attachedForumPhotoBase64 = reader.result;
+            document.getElementById('forum-preview-tag').src = attachedForumPhotoBase64;
+            document.getElementById('forum-img-preview-box').style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    window.cancelForumPhotoAttach = function() {
+        attachedForumPhotoBase64 = "";
+        document.getElementById('forum-img-preview-box').style.display = "none";
+        document.getElementById('forum-file-loader').value = "";
+    };
+
+    window.submitForumPostEngine = function() {
+        const txt = document.getElementById('forum-text-input').value.trim();
+        if(!txt && !attachedForumPhotoBase64) return alert("من فضلك اكتب حالة أو ارفق صورة أولاً قبل النشر.");
+        
+        db.collection("forum_posts").add({
+            sender: currentUsername,
+            senderAvatar: userAvatar,
+            text: txt,
+            mediaUrl: attachedForumPhotoBase64,
+            likesCount: 0,
+            likedBy: [],
+            comments: [],
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            document.getElementById('forum-text-input').value = "";
+            cancelForumPhotoAttach();
+        });
+    };
+
+    window.toggleLikeForumPost = function(postId) {
+        const docRef = db.collection("forum_posts").doc(postId);
+        db.runTransaction(async (transaction) => {
+            const sfDoc = await transaction.get(docRef);
+            if (!sfDoc.exists) return;
+            let currentLikes = sfDoc.data().likesCount || 0;
+            let likedArray = sfDoc.data().likedBy || [];
+            
+            if(likedArray.includes(currentUsername)) {
+                likedArray = likedArray.filter(u => u !== currentUsername);
+                currentLikes--;
+            } else {
+                likedArray.push(currentUsername);
+                currentLikes++;
+                if(sfDoc.data().sender !== currentUsername) {
+                    sendGlobalNotificationEngine(sfDoc.data().sender, `❤️ قام ${currentUsername} بالإعجاب بمنشورك بالمنتدى!`);
+                }
+            }
+            transaction.update(docRef, { likesCount: currentLikes, likedBy: likedArray });
+        });
+    };
+
+    window.submitCommentToPost = function(postId) {
+        const inputEl = document.getElementById(`comment-input-${postId}`);
+        const cText = inputEl.value.trim();
+        if(!cText) return;
+        
+        const docRef = db.collection("forum_posts").doc(postId);
+        db.runTransaction(async (transaction) => {
+            const sfDoc = await transaction.get(docRef);
+            if (!sfDoc.exists) return;
+            let commentsArray = sfDoc.data().comments || [];
+            commentsArray.push({
+                commenter: currentUsername,
+                text: cText,
+                timeStr: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})
+            });
+            transaction.update(docRef, { comments: commentsArray });
+            if(sfDoc.data().sender !== currentUsername) {
+                sendGlobalNotificationEngine(sfDoc.data().sender, `💬 علّق ${currentUsername} على منشورك: "${cText.substring(0,15)}..."`);
+            }
+        }).then(() => {
+            inputEl.value = "";
+        });
+    };
+
+    window.shareForumPostAction = function(text) {
+        let textToShare = text || "صورة مشتركة من منتدى نبض العرب 📊";
+        if(navigator.clipboard) {
+            navigator.clipboard.writeText(textToShare);
+            alert("📋 تم نسخ نص الحالة بنجاح! يمكنك الآن لصقها ومشاركتها في الشات العام.");
+        } else { 
+            alert(`نص المنشور المنسوخ هو:\n${textToShare}`); 
+        }
     };
 
     function loadForumFeedEngine() {
-        db.collection("forum_posts").orderBy("timestamp", "desc").limit(10).onSnapshot(snap => {
+        db.collection("forum_posts").orderBy("timestamp", "desc").onSnapshot(snap => {
             const container = document.getElementById('forum-feed-container');
+            if(!container) return;
             container.innerHTML = "";
             snap.forEach(doc => {
                 const data = doc.data();
+                const id = doc.id;
+                const isLiked = (data.likedBy || []).includes(currentUsername);
+                
+                let commentsHtml = "";
+                (data.comments || []).forEach(c => {
+                    commentsHtml += `
+                        <div class="single-comment-row">
+                            <strong style="color:var(--primary); cursor:pointer;" onclick="openPrivateChatEngine('${c.commenter}')">${c.commenter}:</strong> 
+                            <span>${c.text}</span> <small style="color:#999; float:left;">${c.timeStr || ''}</small>
+                        </div>`;
+                });
+
                 const card = document.createElement('div');
                 card.className = "forum-post-card";
                 card.innerHTML = `
                     <div class="post-header">
-                        <img class="post-avatar" src="${data.senderAvatar || 'https://www.w3schools.com/howto/img_avatar.png'}">
-                        <div class="post-meta-info"><span class="post-user-name">${data.sender}</span></div>
+                        <img class="post-avatar" src="${data.senderAvatar || 'https://www.w3schools.com/howto/img_avatar.png'}" onclick="openPrivateChatEngine('${data.sender}')" style="cursor:pointer;">
+                        <div class="post-meta-info">
+                            <span class="post-user-name" onclick="openPrivateChatEngine('${data.sender}')" style="cursor:pointer;">${data.sender}</span>
+                            <span class="post-user-badges">عضو نشط في نبض العرب ✨</span>
+                        </div>
                     </div>
-                    <div class="post-text">${data.text || ''}</div>
+                    ${data.text ? `<div class="post-text">${data.text}</div>` : ''}
+                    ${data.mediaUrl ? `<img class="post-attached-img" src="${data.mediaUrl}">` : ''}
+                    
+                    <div class="post-interactions">
+                        <button class="interact-btn ${isLiked ? 'liked' : ''}" onclick="toggleLikeForumPost('${id}')">
+                            ${isLiked ? '❤️ تم الإعجاب' : '🖤 إعجاب'} (${data.likesCount || 0})
+                        </button>
+                        <button class="interact-btn" onclick="shareForumPostAction(${JSON.stringify(data.text)})">↩️ مشاركة أو نسخ</button>
+                    </div>
+
+                    <div class="post-comments-section">
+                        <div id="comments-box-${id}">${commentsHtml}</div>
+                        <div class="comment-input-row">
+                            <input type="text" class="comment-mini-input" id="comment-input-${id}" placeholder="اكتب تعليقاً مستعاراً...">
+                            <button class="mini-action-btn" onclick="submitCommentToPost('${id}')">إرسال</button>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(card);
             });
         });
     }
 
+    // ==========================================
+    // منطق الرسائل والمحادثة، الردود، والبصمات الصوتية
+    // ==========================================
+    window.setupReplyQuote = function(sender, text) {
+        selectedReplySender = sender;
+        selectedReplyText = text;
+        document.getElementById('reply-preview-text').innerText = `الرد على [${sender}]: ${text.substring(0,30)}`;
+        document.getElementById('reply-preview-container').style.display = "flex";
+        chatMessageInput.focus();
+    };
+
+    window.cancelReplyQuote = function() {
+        selectedReplySender = "";
+        selectedReplyText = "";
+        document.getElementById('reply-preview-container').style.display = "none";
+    };
+
     function loadMessagesEngine() {
         if(chatUnsubscribe) chatUnsubscribe();
+        
         let pathRef = db.collection("rooms").doc(currentRoomId).collection("messages");
+        if(isPrivateChat) {
+            pathRef = db.collection("private_chats").doc(currentRoomId).collection("messages");
+        } else if(isGroupChat) {
+            pathRef = db.collection("secret_groups").doc(currentRoomId).collection("messages");
+        }
         
         chatUnsubscribe = pathRef.orderBy("timestamp", "asc").onSnapshot((snapshot) => {
             chatMessagesBox.innerHTML = "";
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 if(!data.sender) return;
+                
                 const isMe = data.sender === currentUsername;
                 const wrapper = document.createElement('div');
                 wrapper.className = `msg-wrapper ${isMe ? 'me' : 'other'}`;
                 
+                const userImg = document.createElement('img');
+                userImg.className = "msg-user-img";
+                userImg.src = data.senderAvatar || 'https://www.w3schools.com/howto/img_avatar.png';
+                userImg.onclick = () => openPrivateChatEngine(data.sender);
+                userImg.style.cursor = "pointer";
+                
                 const bubble = document.createElement('div');
                 bubble.className = 'bubble';
                 bubble.style.backgroundColor = isMe ? "#e1ffc7" : "#ffffff";
-                bubble.innerHTML = `<span class="sender-name">${data.sender}</span><span>${data.text || ''}</span>`;
+                bubble.style.borderRadius = isMe ? "12px 0px 12px 12px" : "0px 12px 12px 12px";
                 
+                let quoteHtml = "";
+                if(data.replyToSender && data.replyToText) {
+                    quoteHtml = `<div class="reply-quote">📌 رداً على <b>${data.replyToSender}</b>: ${data.replyToText}</div>`;
+                }
+                
+                bubble.innerHTML = `
+                    ${quoteHtml}
+                    <span class="sender-name" onclick="openPrivateChatEngine('${data.sender}')">${data.sender}</span>
+                    <span>${data.text || ''}</span>
+                `;
+                
+                if(data.mediaUrl) {
+                    const mediaDiv = document.createElement('div');
+                    mediaDiv.style.marginTop = "5px";
+                    if(data.mediaType === 'image') {
+                        mediaDiv.innerHTML = `<img src="${data.mediaUrl}" style="max-width:100%; border-radius:8px; max-height:160px; object-fit:cover;" onclick="window.open('${data.mediaUrl}')">`;
+                    } else if(data.mediaType === 'audio') {
+                        mediaDiv.innerHTML = `
+                            <div class="custom-voice-bubble">
+                                <button class="voice-play-btn" onclick="toggleVoicePlayback(this, '${data.mediaUrl}')">▶</button>
+                                <span style="font-size:10px; color:#555; font-weight:bold;">بصمة صوتية 🎙️</span>
+                            </div>`;
+                    }
+                    bubble.appendChild(mediaDiv);
+                }
+                
+                const timeStr = data.timeLabel || new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'});
+                const footer = document.createElement('div');
+                footer.className = "bubble-footer";
+                footer.innerHTML = `<span>${timeStr}</span><span style="cursor:pointer; color:var(--accent-blue);" onclick="setupReplyQuote('${data.sender}', '${data.text || 'مرفق ميديا'}')">↩️ رد</span>`;
+                bubble.appendChild(footer);
+                
+                wrapper.appendChild(userImg);
                 wrapper.appendChild(bubble);
                 chatMessagesBox.appendChild(wrapper);
             });
@@ -438,21 +747,224 @@
         });
     }
 
+    window.toggleVoicePlayback = function(btn, src) {
+        let player = btn.audioNode;
+        if(!player) {
+            player = new Audio(src);
+            btn.audioNode = player;
+            player.onended = () => btn.innerText = "▶";
+        }
+        if(player.paused) {
+            player.play();
+            btn.innerText = "⏸";
+        } else {
+            player.pause();
+            btn.innerText = "▶";
+        }
+    };
+
     function processMessageSend() {
         const textValue = chatMessageInput.value.trim();
-        if (textValue === '') return;
-        const payload = { sender: currentUsername, senderAvatar: userAvatar, text: textValue, timestamp: firebase.firestore.FieldValue.serverTimestamp() };
-        db.collection("rooms").doc(currentRoomId).collection("messages").add(payload);
+        if (textValue === '' && !selectedReplyText) return;
+        
+        const payload = {
+            sender: currentUsername,
+            senderAvatar: userAvatar,
+            text: textValue,
+            timeLabel: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}),
+            replyToSender: selectedReplySender || null,
+            replyToText: selectedReplyText || null,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        let targetRef = db.collection("rooms").doc(currentRoomId).collection("messages");
+        if(isPrivateChat) {
+            targetRef = db.collection("private_chats").doc(currentRoomId).collection("messages");
+            sendGlobalNotificationEngine(privateRecipientName, `✉️ رسالة خاصة جديدة من: ${currentUsername}`);
+        } else if(isGroupChat) {
+            targetRef = db.collection("secret_groups").doc(currentRoomId).collection("messages");
+        }
+        
+        targetRef.add(payload);
         chatMessageInput.value = '';
+        cancelReplyQuote();
         handleInputChangeUI(chatMessageInput);
     }
 
-    micSubmitBtn.addEventListener('click', () => { processMessageSend(); });
+    function handleFileUpload(file, type) {
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const payload = {
+                sender: currentUsername,
+                senderAvatar: userAvatar,
+                mediaUrl: reader.result,
+                mediaType: type,
+                timeLabel: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            let targetRef = db.collection("rooms").doc(currentRoomId).collection("messages");
+            if(isPrivateChat) targetRef = db.collection("private_chats").doc(currentRoomId).collection("messages");
+            if(isGroupChat) targetRef = db.collection("secret_groups").doc(currentRoomId).collection("messages");
+            
+            targetRef.add(payload);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    document.getElementById('file-loader-cam').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'image'));
+    document.getElementById('file-loader-clip').addEventListener('change', (e) => handleFileUpload(e.target.files[0], 'audio'));
+
+    async function toggleVoiceRecordingEngine() {
+        if (!isRecordingAudio) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorderObj = new MediaRecorder(stream);
+                audioDataChunks = [];
+                
+                mediaRecorderObj.ondataavailable = e => audioDataChunks.push(e.data);
+                mediaRecorderObj.onstop = () => {
+                    const blob = new Blob(audioDataChunks, { type: 'audio/mp3' });
+                    const r = new FileReader();
+                    r.onloadend = () => {
+                        const p = {
+                            sender: currentUsername,
+                            senderAvatar: userAvatar,
+                            mediaUrl: r.result,
+                            mediaType: 'audio',
+                            timeLabel: new Date().toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}),
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        let targetRef = db.collection("rooms").doc(currentRoomId).collection("messages");
+                        if(isPrivateChat) targetRef = db.collection("private_chats").doc(currentRoomId).collection("messages");
+                        if(isGroupChat) targetRef = db.collection("secret_groups").doc(currentRoomId).collection("messages");
+                        targetRef.add(p);
+                    };
+                    r.readAsDataURL(blob);
+                };
+                
+                mediaRecorderObj.start();
+                isRecordingAudio = true;
+                micSubmitBtn.classList.add('mic-active-wa');
+                chatMessageInput.placeholder = "🎙️ جاري تسجيل بصمتك الصوتية الحية...";
+            } catch (err) { 
+                alert("يرجى تفعيل صلاحية إذن الوصول للميكروفون من إعدادات المتصفح أو الهاتف لتسجيل البصمات الحية."); 
+            }
+        } else {
+            mediaRecorderObj.stop();
+            isRecordingAudio = false;
+            micSubmitBtn.classList.remove('mic-active-wa');
+            chatMessageInput.placeholder = "اكتب رسالة...";
+        }
+    }
+
+    micSubmitBtn.addEventListener('click', () => { 
+        if(chatMessageInput.value.trim() !== "") { processMessageSend(); } else { toggleVoiceRecordingEngine(); } 
+    });
     chatMessageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processMessageSend(); });
+
+    // ==========================================
+    // منطق الإشعارات الفايربيز العامة بالخلفية
+    // ==========================================
+    function sendGlobalNotificationEngine(targetUser, alertText) {
+        db.collection("app_notifications").add({
+            target: targetUser,
+            text: alertText,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    }
+
+    function listenGlobalNotificationsEngine() {
+        db.collection("app_notifications").where("target", "==", currentUsername).orderBy("timestamp", "desc").limit(10).onSnapshot(snap => {
+            const box = document.getElementById('app-notifications-box');
+            if(!box) return;
+            box.innerHTML = `<h5 style="margin-bottom:10px; color:var(--primary-dark);">🔔 مركز الإشعارات الفورية الخاص بك</h5>`;
+            if(snap.empty) {
+                box.innerHTML += `<p style="font-size:12px; color:#888;">لا توجد تنبيهات أو إشعارات جديدة حالياً.</p>`;
+            }
+            snap.forEach(doc => {
+                const n = doc.data();
+                const card = document.createElement('div');
+                card.className = "notify-item-card";
+                card.innerHTML = `<span>${n.text}</span> <button style="border:none; background:none; color:red; font-size:11px;" onclick="this.parentElement.remove()">حذف</button>`;
+                box.appendChild(card);
+            });
+        });
+    }
+
+    // ==========================================
+    // منطق غرف المجموعات السرية المحمية بـ ID من 6 أرقام
+    // ==========================================
+    window.triggerCreatePrivateGroup = function() {
+        const gName = prompt("أدخل اسماً مميزاً لمجموعتك السرية الجديدة:");
+        if(!gName) return;
+        const randomId = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        db.collection("secret_groups").doc(randomId).set({
+            groupId: randomId,
+            groupName: gName,
+            creator: currentUsername,
+            members: [currentUsername],
+            createdTime: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            let localG = JSON.parse(localStorage.getItem('joined_secret_groups') || "[]");
+            if(!localG.includes(randomId)) localG.push(randomId);
+            localStorage.setItem('joined_secret_groups', JSON.stringify(localG));
+            
+            alert(`🎉 تم إنشاء مجموعتك السرية بنجاح!\n🆔 رقم الـ ID السري هو: ${randomId}`);
+            renderJoinedSecretGroupsUI();
+            enterRoom(randomId, `🔒 مجموعة: ${gName}`, true);
+        });
+    };
+
+    window.processSearchAndEnterSecretGroup = function() {
+        const idInput = document.getElementById('group-search-id-input').value.trim();
+        if(!idInput || idInput.length < 5) return alert("من فضلك اكتب رقم معرف ID سري صحيح ومكون من 6 أرقام.");
+        
+        db.collection("secret_groups").doc(idInput).get().then(doc => {
+            if(!doc.exists) {
+                alert("❌ عذراً، لم يتم العثور على أي مجموعة سرية مسجلة بهذا الـ ID.");
+            } else {
+                const data = doc.data();
+                let localG = JSON.parse(localStorage.getItem('joined_secret_groups') || "[]");
+                if(!localG.includes(idInput)) localG.push(idInput);
+                localStorage.setItem('joined_secret_groups', JSON.stringify(localG));
+                
+                document.getElementById('group-search-id-input').value = "";
+                renderJoinedSecretGroupsUI();
+                enterRoom(idInput, `🔒 مجموعة: ${data.groupName}`, true);
+            }
+        });
+    };
 
     function renderJoinedSecretGroupsUI() {
         const container = document.getElementById('joined-groups-container');
-        if(container) container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center;">مجموعاتك السرية المحمية جاهزة للتحميل.</p>`;
+        if(!container) return;
+        container.innerHTML = "";
+        let localG = JSON.parse(localStorage.getItem('joined_secret_groups') || "[]");
+        
+        if(localG.length === 0) {
+            container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center;">لم تقم بالانضمام أو إنشاء أي مجموعة سرية بعد.</p>`;
+            return;
+        }
+        
+        localG.forEach(id => {
+            db.collection("secret_groups").doc(id).get().then(doc => {
+                if(doc.exists) {
+                    const data = doc.data();
+                    const row = document.createElement('div');
+                    row.style = "background:white; padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);";
+                    row.innerHTML = `
+                        <div>
+                            <strong style="color:var(--primary); font-size:14px;">${data.groupName}</strong>
+                            <br><small style="color:#777;">ID: ${id}</small>
+                        </div>
+                        <button class="mini-action-btn" style="background:var(--whatsapp-green);" onclick="enterRoom('${id}', '🔒 مجموعة: ${data.groupName}', true)">دخول 🔓</button>
+                    `;
+                    container.appendChild(row);
+                }
+            });
+        });
     }
 </script>
 </body>
