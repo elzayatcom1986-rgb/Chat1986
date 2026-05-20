@@ -84,7 +84,7 @@
         
         /* صندوق التعليقات */
         .post-comments-section { background: #f9f9f9; border-radius: 10px; padding: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
-        .single-comment-row { background: white; padding: 8px 12px; border-radius: 8px; border-right: 3px solid #ccc; }
+        .single-comment-row { background: white; padding: 8px 12px; border-radius: 8px; border-right: 3px solid #ccc; text-align: right; }
         .comment-input-row { display: flex; gap: 8px; margin-top: 6px; }
         .comment-mini-input { flex: 1; border: 1px solid #ddd; padding: 8px 12px; border-radius: 18px; outline: none; font-size: 12px; }
 
@@ -125,7 +125,7 @@
         .voice-play-btn { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
         .bubble-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 10px; color: #777; }
 
-        /* شريط الإرسال السفلي الموحد المنسق لمنع التضخم واختلاف المقاسات */
+        /* شريط الإرسال السفلي الموحد المنسق */
         .input-row-wa { display: flex; align-items: center; padding: 6px 10px; gap: 8px; background: rgba(239, 231, 221, 0.95); border-top: 1px solid rgba(0,0,0,0.05); height: 56px; min-height: 56px; max-height: 56px; box-sizing: border-box; }
         .input-bar-wa { flex: 1; display: flex; align-items: center; background: #ffffff; border-radius: 24px; padding: 0 12px; gap: 8px; height: 42px; min-height: 42px; max-height: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); box-sizing: border-box; overflow: hidden; }
         .wa-icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #66767d; transition: color 0.15s; padding: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -334,7 +334,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // متغيرات الحالة
+    // variables
     let currentRoomId = "room1";
     let isPrivateChat = false;
     let isGroupChat = false;
@@ -536,18 +536,22 @@
         });
     };
 
-    // ↩️ ميزة مشاركة البوست الثابتة والبديلة الفعالة على كل الأجهزة
-    window.shareForumPostAction = function(text) {
-        let textToShare = text || "منشور مميز من منتدى شات نبض العرب ✨";
-        if(navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(textToShare).then(() => {
-                alert("📋 تم نسخ نص المنشور بنجاح! يمكنك الآن لصقه ومشاركته مع أصدقائك.");
-            }).catch(() => {
-                prompt("📋 انسخ نص المنشور من المربع التالي مباشرة ومشاركته:", textToShare);
-            });
-        } else {
-            prompt("📋 انسخ نص المنشور من المربع التالي مباشرة ومشاركته:", textToShare);
-        }
+    // ↩️ مشاركة البوست الحقيقية بدون أخطاء جافا سكريبت
+    window.shareForumPostAction = function(postId) {
+        db.collection("forum_posts").doc(postId).get().then(doc => {
+            if (doc.exists) {
+                const textToShare = doc.data().text || "منشور مميز من منتدى شات نبض العرب ✨";
+                if(navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToShare).then(() => {
+                        alert("📋 تم نسخ نص المنشور بنجاح! يمكنك الآن لصقه ومشاركته مع أصدقائك.");
+                    }).catch(() => {
+                        prompt("📋 انسخ نص المنشور من المربع التالي مباشرة ومشاركته:", textToShare);
+                    });
+                } else {
+                    prompt("📋 انسخ نص المنشور من المربع التالي مباشرة ومشاركته:", textToShare);
+                }
+            }
+        });
     };
 
     function loadForumFeedEngine() {
@@ -570,7 +574,6 @@
                     </div>
                 `).join('');
 
-                // إصلاح تمرير الإعجاب الآمن لمنع تعطل الأزرار
                 card.innerHTML = `
                     <div class="post-header">
                         <img class="post-avatar" src="${data.senderAvatar || 'https://www.w3schools.com/howto/img_avatar.png'}">
@@ -583,14 +586,14 @@
                     ${data.mediaUrl ? `<img class="post-attached-img" src="${data.mediaUrl}">` : ''}
                     <div class="post-interactions">
                         <button class="interact-btn ${hasLiked?'liked':''}" onclick="toggleForumLike('${postId}')">👍 <span>${likes.length}</span> إعجاب</button>
-                        <button class="interact-btn" onclick="document.getElementById('comment-box-${postId}').style.display='flex'">💬 <span>${comments.length}</span> تعليق</button>
-                        <button class="interact-btn" onclick="shareForumPostAction(${JSON.stringify(data.text || '')})">↩️ مشاركة</button>
+                        <button class="interact-btn" onclick="toggleCommentBoxDisplay('${postId}')">💬 <span>${comments.length}</span> تعليق</button>
+                        <button class="interact-btn" onclick="shareForumPostAction('${postId}')">↩️ مشاركة</button>
                     </div>
                     <div class="post-comments-section" id="comment-box-${postId}" style="display:none;">
                         <div id="comments-list-${postId}">${commentsHtml}</div>
                         <div class="comment-input-row">
                             <input type="text" class="comment-mini-input" id="comment-in-${postId}" placeholder="اكتب تعليقك الآن...">
-                            <button class="mini-action-btn" onclick="submitForumComment('${postId}', ${JSON.stringify(comments)})">ارسال</button>
+                            <button class="mini-action-btn" onclick="submitForumComment('${postId}')">ارسال</button>
                         </div>
                     </div>
                 `;
@@ -599,7 +602,15 @@
         });
     }
 
-    // 🚀 تحديث دالة الإعجاب لتعمل من خلال السيرفر مباشرة بشكل مستقر
+    window.toggleCommentBoxDisplay = function(postId) {
+        const box = document.getElementById(`comment-box-${postId}`);
+        if(box.style.display === "none") {
+            box.style.display = "flex";
+        } else {
+            box.style.display = "none";
+        }
+    };
+
     window.toggleForumLike = function(postId) {
         const postRef = db.collection("forum_posts").doc(postId);
         postRef.get().then(doc => {
@@ -615,12 +626,19 @@
         });
     };
 
-    window.submitForumComment = function(postId, oldComments) {
+    window.submitForumComment = function(postId) {
         const input = document.getElementById(`comment-in-${postId}`);
         const txt = input.value.trim();
         if(!txt) return;
-        const updated = [...oldComments, { user: currentUsername, text: txt }];
-        db.collection("forum_posts").doc(postId).update({ comments: updated }).then(() => { input.value = ""; });
+        
+        const postRef = db.collection("forum_posts").doc(postId);
+        postRef.get().then(doc => {
+            if(doc.exists) {
+                const oldComments = doc.data().comments || [];
+                const updated = [...oldComments, { user: currentUsername, text: txt }];
+                postRef.update({ comments: updated }).then(() => { input.value = ""; });
+            }
+        });
     };
 
     function listenToNotificationsEngine() {
@@ -669,10 +687,8 @@
         
         let queryRef;
         if(isPrivateChat) {
-            // 🔒 تعديل الفلتر الشامل ليعرض رسائل الطرفين معاً في المحادثة الخاصة
-            queryRef = db.collection("private_chats")
-            .where("chatIdentityKey", "in", [`${currentUsername}_${privateRecipientName}`, `${privateRecipientName}_${currentUsername}`])
-            .orderBy("timestamp", "asc");
+            // 🔒 الطريقة الصخرية المضمونة لقراءة الشات الخاص (رسايلك ورسايله) بدون الحاجة لـ Indexing يدوي
+            queryRef = db.collection("private_chats").orderBy("timestamp", "asc");
             
             db.collection("private_chats").where("sender", "==", privateRecipientName).where("recipient", "==", currentUsername)
             .get().then(snap => snap.forEach(d => d.ref.update({ isRead: true })));
@@ -687,6 +703,13 @@
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 if(!data.sender) return;
+                
+                // لو شات خاص، بنعمل فلترة فورية هنا للتأكد إن الرسالة تخصك أنت والطرف التاني بس
+                if(isPrivateChat) {
+                    const isInvolved = (data.sender === currentUsername && data.recipient === privateRecipientName) || 
+                                       (data.sender === privateRecipientName && data.recipient === currentUsername);
+                    if(!isInvolved) return; 
+                }
                 
                 const isMe = data.sender === currentUsername;
                 const wrapper = document.createElement('div');
@@ -706,7 +729,6 @@
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.className = "sender-name";
-                // تغيير الاسم تلقائياً إلى "أنا" لرسائلك الشخصية
                 nameSpan.innerText = isMe ? "أنا" : data.sender;
                 if(!isMe) { nameSpan.onclick = () => openPrivateChatWindow(data.sender); }
                 bubble.appendChild(nameSpan);
@@ -802,7 +824,7 @@
         if(selectedReplyText) { payload.replyToText = selectedReplyText; payload.replyToSender = selectedReplySender; }
 
         if(isPrivateChat) {
-            payload.recipient = privateRecipientName; payload.isRead = false; payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
+            payload.recipient = privateRecipientName; payload.isRead = false;
             db.collection("private_chats").add(payload);
         } else if(isGroupChat) {
             db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
@@ -832,7 +854,7 @@
                 sender: currentUsername, senderAvatar: userAvatar, mediaUrl: reader.result, mediaType: type, timestamp: firebase.firestore.FieldValue.serverTimestamp(), likedBy: []
             };
             if(isPrivateChat) {
-                payload.recipient = privateRecipientName; payload.isRead = false; payload.chatIdentityKey = `${currentUsername}_${privateRecipientName}`;
+                payload.recipient = privateRecipientName; payload.isRead = false;
                 db.collection("private_chats").add(payload);
             } else if(isGroupChat) {
                 db.collection("custom_groups").doc(currentRoomId).collection("messages").add(payload);
@@ -858,7 +880,7 @@
                     const r = new FileReader();
                     r.onloadend = () => {
                         const p = { sender: currentUsername, senderAvatar: userAvatar, mediaUrl: r.result, mediaType: 'audio', timestamp: firebase.firestore.FieldValue.serverTimestamp(), likedBy: [] };
-                        if(isPrivateChat) { p.recipient = privateRecipientName; p.isRead = false; p.chatIdentityKey = `${currentUsername}_${privateRecipientName}`; db.collection("private_chats").add(p); }
+                        if(isPrivateChat) { p.recipient = privateRecipientName; p.isRead = false; db.collection("private_chats").add(p); }
                         else if(isGroupChat) { db.collection("custom_groups").doc(currentRoomId).collection("messages").add(p); }
                         else { db.collection("rooms").doc(currentRoomId).collection("messages").add(p); }
                     };
