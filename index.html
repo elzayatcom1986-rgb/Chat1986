@@ -685,29 +685,22 @@
         if(chatUnsubscribe) chatUnsubscribe();
         chatMessagesBox.innerHTML = "";
         
-        let queryRef;
-        if(isPrivateChat) {
-            // 🔒 الطريقة الصخرية المضمونة لقراءة الشات الخاص (رسايلك ورسايله) بدون الحاجة لـ Indexing يدوي
-            queryRef = db.collection("private_chats").orderBy("timestamp", "asc");
-            
-            db.collection("private_chats").where("sender", "==", privateRecipientName).where("recipient", "==", currentUsername)
-            .get().then(snap => snap.forEach(d => d.ref.update({ isRead: true })));
-        } else if(isGroupChat) {
-            queryRef = db.collection("custom_groups").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
-        } else {
-            queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
-        }
-        
-        chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
-            chatMessagesBox.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                if(!data.sender) return;
-                
-                // لو شات خاص، بنعمل فلترة فورية هنا للتأكد إن الرسالة تخصك أنت والطرف التاني بس
-                if(isPrivateChat) {
-                    const isInvolved = (data.sender === currentUsername && data.recipient === privateRecipientName) || 
-                                       (data.sender === privateRecipientName && data.recipient === currentUsername);
+                    let queryRef;
+    if (isPrivateChat) {
+        queryRef = db.collection("private_chats").doc(currentChatId).collection("messages").orderBy("timestamp", "desc").limit(50);
+    } else if (isGroupChat) {
+        queryRef = db.collection("custom_rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "desc").limit(50);
+    } else {
+        queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "desc").limit(50);
+    }
+
+                    chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
+        chatMessagesBox.innerHTML = "";
+        // نستخدم .docs.reverse() لعرض الرسائل من الأقدم للأحدث بعد سحبها
+        snapshot.docs.reverse().forEach((doc) => {
+            const data = doc.data();
+            if(!data.sender) return;
+
                     if(!isInvolved) return; 
                 }
                 
