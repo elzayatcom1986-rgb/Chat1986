@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>دردشة شات الحب - احلى بنات - النسخة الاحترافية المثالية</title>
+    <title>شات نبض العرب - النسخة الاحترافية المثالية</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <style>
@@ -145,14 +145,14 @@
 
     <div class="modal-screen" id="profile-screen" style="display: none;">
         <div class="profile-card" style="background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-            <h3 style="margin-bottom: 14px; color: var(--primary);">مرحباً بك في دردشة شات الحب - احلى بنات ✨</h3>
+            <h3 style="margin-bottom: 14px; color: var(--primary);">مرحباً بك في شات نبض العرب ✨</h3>
             <input type="text" class="field-input-text" id="profile-name-input" placeholder="اكتب اسمك المستعار هنا..." style="text-align:center; margin-bottom:12px; border-radius:20px;">
             <button class="mini-action-btn" id="save-profile-btn" style="width:100%; padding:10px; border-radius:20px; font-size:13px;">دخول التطبيق 🔓</button>
         </div>
     </div>
 
     <div class="header">
-        <span class="header-title">💬دردشة شات الحب - احلى بنات</span>
+        <span class="header-title">💬 شات نبض العرب</span>
         <span id="global-user-tag" style="font-size:11px; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:10px;"></span>
     </div>
 
@@ -169,7 +169,7 @@
 
     <div class="moving-ticker" id="appTicker">
         <marquee behavior="scroll" direction="right" scrollamount="5">
-            مرحبا بكم في دردشة شات الحب - احلى بنات " نتمني لكم قضاء وقت ممتع " مع تحيات اداره الشات : التصميم برعاية فـــْـۛٱﺈقد.ٱڵذٱڪرهٖ
+            مرحبا بكم في شات نبض العرب " نتمني لكم قضاء وقت ممتع " مع تحيات اداره الشات : التصميم برعاية فـــْـۛٱﺈقد.ٱڵذٱڪرهٖ
         </marquee>
     </div>
 
@@ -685,22 +685,29 @@
         if(chatUnsubscribe) chatUnsubscribe();
         chatMessagesBox.innerHTML = "";
         
-                    let queryRef;
-    if (isPrivateChat) {
-        queryRef = db.collection("private_chats").doc(currentChatId).collection("messages").orderBy("timestamp", "desc").limit(50);
-    } else if (isGroupChat) {
-        queryRef = db.collection("custom_rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "desc").limit(50);
-    } else {
-        queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "desc").limit(50);
-    }
-
-                    chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
-        chatMessagesBox.innerHTML = "";
-        // نستخدم .docs.reverse() لعرض الرسائل من الأقدم للأحدث بعد سحبها
-        snapshot.docs.reverse().forEach((doc) => {
-            const data = doc.data();
-            if(!data.sender) return;
-
+        let queryRef;
+        if(isPrivateChat) {
+            // 🔒 الطريقة الصخرية المضمونة لقراءة الشات الخاص (رسايلك ورسايله) بدون الحاجة لـ Indexing يدوي
+            queryRef = db.collection("private_chats").orderBy("timestamp", "asc");
+            
+            db.collection("private_chats").where("sender", "==", privateRecipientName).where("recipient", "==", currentUsername)
+            .get().then(snap => snap.forEach(d => d.ref.update({ isRead: true })));
+        } else if(isGroupChat) {
+            queryRef = db.collection("custom_groups").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
+        } else {
+            queryRef = db.collection("rooms").doc(currentRoomId).collection("messages").orderBy("timestamp", "asc");
+        }
+        
+        chatUnsubscribe = queryRef.onSnapshot((snapshot) => {
+            chatMessagesBox.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if(!data.sender) return;
+                
+                // لو شات خاص، بنعمل فلترة فورية هنا للتأكد إن الرسالة تخصك أنت والطرف التاني بس
+                if(isPrivateChat) {
+                    const isInvolved = (data.sender === currentUsername && data.recipient === privateRecipientName) || 
+                                       (data.sender === privateRecipientName && data.recipient === currentUsername);
                     if(!isInvolved) return; 
                 }
                 
