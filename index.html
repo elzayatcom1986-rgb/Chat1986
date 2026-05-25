@@ -118,7 +118,6 @@
         .action-circle-btn-wa:active { background-color: var(--primary-dark); }
         .mic-active-wa { background-color: #d32f2f !important; }
 
-        /* قايمة الدبوس المنبثقة */
         .attachment-menu { position: absolute; bottom: 65px; right: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 8px 0; display: none; flex-direction: column; min-width: 180px; z-index: 1000; }
         .attachment-menu.active { display: flex; }
         .attachment-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; transition: background 0.2s; }
@@ -292,7 +291,6 @@
             <button style="border:none; background:none; color:red; font-weight:bold; cursor:pointer;" onclick="cancelReplyQuote()">✕</button>
         </div>
 
-        <!-- قايمة المرفقات -->
         <div class="attachment-menu" id="attachment-menu">
             <div class="attachment-item" onclick="document.getElementById('file-loader-video').click()">
                 <div class="attachment-icon" style="background:#e91e63;">🎥</div>
@@ -319,16 +317,13 @@
                 <input type="file" id="file-loader-audio" accept="audio/*">
                 <input type="file" id="file-loader-clip" accept="audio/*">
                 
-                <!-- زر الدبوس بدل + -->
                 <button class="wa-icon-btn" onclick="toggleAttachmentMenu()">📎</button>
                 
                 <input type="text" class="input-box" id="chat-message-input" placeholder="اكتب رسالة..." oninput="handleInputChangeUI(this)">
                 
-                <!-- أيقونة الصور الجديدة -->
                 <button class="wa-icon-btn" onclick="document.getElementById('file-loader-cam').click()">🖼️</button>
             </div>
             
-            <!-- أيقونة المايك والإرسال -->
             <button class="action-circle-btn-wa" id="mic-submit-btn">🎤</button>
         </div>
     </div>
@@ -410,10 +405,7 @@
     document.addEventListener('click', function(e) {
         if(!e.target.closest('.attachment-menu') && !e.target.closest('.wa-icon-btn')) {
             document.getElementById('attachment-menu').classList.remove('active');
-        }
-    });
-});
-            document.getElementById('my-profile-status').value = userStatus;
+       document.getElementById('my-profile-status').value = userStatus;
         document.getElementById('my-profile-avatar-tag').src = userAvatar;
 
         listenToNotificationsEngine();
@@ -823,7 +815,8 @@
         if(!player) { player = new Audio(src); btn.audioNode = player; player.onended = () => btn.innerText = "▶"; }
         if(player.paused) { player.play(); btn.innerText = "⏸"; } else { player.pause(); btn.innerText = "▶"; }
     };
-        function processLikeToggle(msgId, likesArray, hasLiked) {
+</script>
+    function processLikeToggle(msgId, likesArray, hasLiked) {
         let updatedLikes = [...likesArray];
         if(hasLiked) updatedLikes = updatedLikes.filter(u => u!== currentUsername);
         else updatedLikes.push(currentUsername);
