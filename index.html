@@ -815,7 +815,6 @@
         if(!player) { player = new Audio(src); btn.audioNode = player; player.onended = () => btn.innerText = "▶"; }
         if(player.paused) { player.play(); btn.innerText = "⏸"; } else { player.pause(); btn.innerText = "▶"; }
     };
-</script>
     function processLikeToggle(msgId, likesArray, hasLiked) {
         let updatedLikes = [...likesArray];
         if(hasLiked) updatedLikes = updatedLikes.filter(u => u!== currentUsername);
